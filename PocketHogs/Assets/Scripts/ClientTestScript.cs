@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.UI;
+
+//THIS IS DIRECTLY FROM THE TUTORIAL AKA NOT FINAL
 public class ClientTestScript : MonoBehaviour {
 
     private const int MAX_CONNECTION = 6;
@@ -70,4 +72,5 @@ public class ClientTestScript : MonoBehaviour {
         connectionTime = Time.time;
         isConnected = true;
     }
+
 }
