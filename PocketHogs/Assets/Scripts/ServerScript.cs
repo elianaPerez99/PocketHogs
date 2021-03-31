@@ -4,7 +4,6 @@ using UnityEngine;
 using System.Text;
 using UnityEngine.Networking;
 
-//THIS IS DIRECTLY FROM THE TUTORIAL AKA NOT FINAL
 public class ServerScript : MonoBehaviour 
 {
     private const int MAX_CONNECTION = 6;

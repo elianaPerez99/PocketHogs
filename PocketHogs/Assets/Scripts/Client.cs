@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class Client : MonoBehaviour {
     private const int MAX_CONNECTION = 6;
@@ -21,6 +22,11 @@ public class Client : MonoBehaviour {
     private bool isStarted = false;
     private byte error;
     private string ip;
+
+    private void Awake()
+    {
+        DontDestroyOnLoad(this.gameObject);
+    }
     private void Update()
     {
         //only running update information if the client has already connected
@@ -55,37 +61,42 @@ public class Client : MonoBehaviour {
 
     public void Connect()
     {
-        //making sure that the ip is correct
-        string potentialIP = GameObject.Find("IPInputField").GetComponent<InputField>().text;
-        if (potentialIP == "")
+        //make sure we can only connect once
+        if (!isConnected)
         {
-            GameObject.Find("WarningText").GetComponent<Text>().text = "Please enter an IP";
-            return;
-        }
-        ip = potentialIP;
-        NetworkTransport.Init();
-        ConnectionConfig cc = new ConnectionConfig();
+            //making sure that the ip is correct
+            string potentialIP = GameObject.Find("IPInputField").GetComponent<InputField>().text;
+            if (potentialIP == "")
+            {
+                GameObject.Find("WarningText").GetComponent<Text>().text = "Please enter an IP";
+                return;
+            }
+            ip = potentialIP;
+            NetworkTransport.Init();
+            ConnectionConfig cc = new ConnectionConfig();
 
-        reliableChannel = cc.AddChannel(QosType.Reliable);
-        unreliableChannel = cc.AddChannel(QosType.Unreliable);
+            reliableChannel = cc.AddChannel(QosType.Reliable);
+            unreliableChannel = cc.AddChannel(QosType.Unreliable);
 
-        HostTopology topop = new HostTopology(cc, MAX_CONNECTION);
+            HostTopology topop = new HostTopology(cc, MAX_CONNECTION);
 
-        hostID = NetworkTransport.AddHost(topop, 0);
-        connectionID = NetworkTransport.Connect(hostID, ip, port, 0, out error);
-        if (((NetworkError)error).ToString() == "0")
-        {
-            connectionTime = Time.time;
-            isConnected = true;
-            //go to next scene
+            hostID = NetworkTransport.AddHost(topop, 0);
+            connectionID = NetworkTransport.Connect(hostID, ip, port, 0, out error);
+            if (((NetworkError)error).ToString() == "Ok")
+            {
+                connectionTime = Time.time;
+                isConnected = true;
+                SceneManager.LoadScene("Map1");
+            }
+            else
+            {
+                //not allowing the client to go forward without a valid ip
+                GameObject.Find("WarningText").GetComponent<Text>().text = ((NetworkError)error).ToString();
+                return;
+            }
+
         }
-        else 
-        {
-            //not allowing the client to go forward without a valid ip
-            GameObject.Find("WarningText").GetComponent<Text>().text = ((NetworkError)error).ToString();
-            return;
-        }
-        
     }
+       
 
 }
