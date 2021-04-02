@@ -88,4 +88,34 @@ public class Client : MonoBehaviour {
         
     }
 
+    public string TextFieldTest()
+    {
+        string potentialIP = GameObject.Find("IPInputField").GetComponent<InputField>().text;
+        if (potentialIP == "")
+        {
+            return "Please enter an IP";
+        }
+        else
+        {
+            return "";
+        }
+
+    }
+
+    public string ConnectTest(string testIP)
+    {
+        NetworkTransport.Init();
+        ConnectionConfig cc = new ConnectionConfig();
+
+        reliableChannel = cc.AddChannel(QosType.Reliable);
+        unreliableChannel = cc.AddChannel(QosType.Unreliable);
+
+        HostTopology topop = new HostTopology(cc, MAX_CONNECTION);
+
+        hostID = NetworkTransport.AddHost(topop, 0);
+        connectionID = NetworkTransport.Connect(hostID, testIP, port, 0, out error);
+            return ((NetworkError)error).ToString();
+
+    }
+
 }
