@@ -26,6 +26,31 @@ public class HedgeHogTest {
 	}
 
 	[Test]
+	public void CheckIfFleeingCorrectly()
+	{
+		//setting up fake hog
+		GameObject hog = GameObject.FindGameObjectsWithTag("hog")[0];
+		HedgeHog hogScript = hog.GetComponent<HedgeHog>();
+		Fleeing fleeScript = hog.GetComponentInChildren<Fleeing>();
+		fleeScript.hog = hogScript;
+
+		//add a player
+		GameObject player = GameObject.FindGameObjectsWithTag("Player")[0];
+		//put the player in the trigger's range
+		player.transform.position = hog.transform.position;
+		fleeScript.InvokeState();
+		//make sure the state is now fleeing
+		Assert.AreEqual(hogScript.currentState, HedgeHog.States.Fleeing);
+		Assert.IsTrue(fleeScript.areFleeing);
+
+		//make sure that we dont have another state
+		Assert.AreNotEqual(hogScript.currentState, HedgeHog.States.SeekFood);
+		Assert.AreNotEqual(hogScript.currentState, HedgeHog.States.EatFood);
+		Assert.AreNotEqual(hogScript.currentState, HedgeHog.States.Wandering);
+
+	}
+
+	[Test]
 	public void CheckIfSpawningCorrectly()
 	{
 		GameObject spawner = GameObject.FindGameObjectsWithTag("spawner")[0];

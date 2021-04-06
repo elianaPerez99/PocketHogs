@@ -12,7 +12,7 @@ public class HedgeHog : MonoBehaviour {
 		Fleeing
 	};
 
-	public States currentState;
+	public States currentState = States.Wandering;
 	public Wandering wandering;
 	//functions
 	// Use this for initialization
@@ -52,7 +52,6 @@ public class HedgeHog : MonoBehaviour {
 				break;
 		}
 	}
-
 
 
 }
