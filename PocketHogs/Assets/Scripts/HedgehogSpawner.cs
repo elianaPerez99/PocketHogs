@@ -8,9 +8,9 @@ public class HedgehogSpawner : MonoBehaviour {
 	public GameObject hhPrefab;
 	public int maxHogsPer = 6;
 	public int minHogsPer = 1;
-	private int currentMax = 1;
+	public int currentMax = 1;
 	private int currentAmount = 0;
-	private int currentNumClients = 0;
+	public int currentNumClients = 0;
 	public Vector2 spawnMin;
 	public Vector2 spawnMax;
 
@@ -30,7 +30,7 @@ public class HedgehogSpawner : MonoBehaviour {
 		AdjustHedgeHogs();
 	}
 
-	private void ChangeNumHogs(int numOfClients)
+	public void ChangeNumHogs(int numOfClients)
 	{
 		currentMax = (int)Random.Range(minHogsPer, maxHogsPer)*numOfClients;
 	}
@@ -41,6 +41,7 @@ public class HedgehogSpawner : MonoBehaviour {
 		//later we need to spawn via types or potentially spawn types based on biome
 		while (currentAmount < currentMax)
 		{
+			//this needs to run on the server
 			var position = new Vector3(Random.Range(spawnMin.x, spawnMax.x), Random.Range(spawnMin.y, spawnMax.y), 0);
 			GameObject temp = Instantiate(hhPrefab, position, Quaternion.identity);
 			temp.transform.SetParent(transform);

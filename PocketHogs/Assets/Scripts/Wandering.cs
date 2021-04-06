@@ -7,7 +7,7 @@ public class Wandering : MonoBehaviour {
 	public Vector2 spawnMin;
 	public Vector2 spawnMax;
 	public float speed = 5f;
-	private bool areWandering = false;
+	public bool areWandering = false;
 	private Rigidbody2D rb;
 
 	//tutorial stuff (delete if no worky)

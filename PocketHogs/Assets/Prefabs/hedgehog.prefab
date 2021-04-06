@@ -26,7 +26,7 @@ GameObject:
   - component: {fileID: 60504394519191068}
   m_Layer: 0
   m_Name: hedgehog
-  m_TagString: Untagged
+  m_TagString: hog
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -148,6 +148,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6cc0caefa53f92646a193d5ffecdc2e1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  currentState: 0
+  wandering: {fileID: 0}
 --- !u!114 &114272009070078436
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -162,6 +164,7 @@ MonoBehaviour:
   spawnMin: {x: -7, y: -4}
   spawnMax: {x: 7, y: 4}
   speed: 0.5
+  areWandering: 0
 --- !u!212 &212410744732634246
 SpriteRenderer:
   m_ObjectHideFlags: 1

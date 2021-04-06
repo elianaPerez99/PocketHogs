@@ -253,7 +253,7 @@ GameObject:
   - component: {fileID: 648997183}
   m_Layer: 8
   m_Name: HedgeHogSpawner
-  m_TagString: Untagged
+  m_TagString: spawner
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -283,8 +283,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hhPrefab: {fileID: 1750454014852108, guid: a5c64b6149f3fdd48b1e56f755dac06c, type: 2}
-  maxHogsPer: 6
-  minHogsPer: 12
+  maxHogsPer: 12
+  minHogsPer: 6
+  currentMax: 1
+  currentNumClients: 0
   spawnMin: {x: -7.4, y: -4}
   spawnMax: {x: 7.4, y: 4}
 --- !u!1 &806464270

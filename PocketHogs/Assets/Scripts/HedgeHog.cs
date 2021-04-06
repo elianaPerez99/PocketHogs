@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using NUnit.Framework;
 public class HedgeHog : MonoBehaviour {
 	//variables
 	public enum States
@@ -12,8 +12,8 @@ public class HedgeHog : MonoBehaviour {
 		Fleeing
 	};
 
-	private States currentState;
-	private Wandering wandering;
+	public States currentState;
+	public Wandering wandering;
 	//functions
 	// Use this for initialization
 	void Start () 
@@ -52,4 +52,7 @@ public class HedgeHog : MonoBehaviour {
 				break;
 		}
 	}
+
+
+
 }
