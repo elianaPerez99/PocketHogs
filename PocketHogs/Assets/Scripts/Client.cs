@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Text;
 using UnityEngine.Networking;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
@@ -42,14 +43,19 @@ public class Client : MonoBehaviour {
             NetworkEventType recData = NetworkTransport.Receive(out recHostId, out connectionId, out channelId, recBuffer, bufferSize, out dataSize, out error);
             switch (recData)
             {
-                case NetworkEventType.Nothing: break;
-                case NetworkEventType.ConnectEvent: break;
-                case NetworkEventType.DataEvent: break;
-                case NetworkEventType.DisconnectEvent: break;
+                case NetworkEventType.Nothing:
+                    {
+                        string msg = Encoding.Unicode.GetString(recBuffer, 0, dataSize);
+                        Debug.Log("Recieving: " + msg);
+                        break;
+                    }
+                case NetworkEventType.DataEvent:
+                    {
+                        string msg = Encoding.Unicode.GetString(recBuffer, 0, dataSize);
+                        Debug.Log("Recieving: " + msg);
+                        break;
+                    }
 
-                case NetworkEventType.BroadcastEvent:
-
-                    break;
             }
         }
         else
@@ -87,6 +93,7 @@ public class Client : MonoBehaviour {
                 connectionTime = Time.time;
                 isConnected = true;
                 SceneManager.LoadScene("Map1");
+
             }
             else
             {
@@ -98,5 +105,8 @@ public class Client : MonoBehaviour {
         }
     }
        
-
+    public void GetHedgeHogs(string msg)
+    {
+        
+    }
 }

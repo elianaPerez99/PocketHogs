@@ -21,7 +21,7 @@ public class HedgehogSpawner : MonoBehaviour {
 	private void Start()
 	{
 		//eventually we need to get the number of clients from the server, but for now we manually put it in
-		ChangeNumHogs(1);
+		//ChangeNumHogs(1);
 	}
 	void Update () 
 	{
