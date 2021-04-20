@@ -4,8 +4,17 @@ using UnityEngine;
 using System.Text;
 using UnityEngine.Networking;
 
+public class ServerClient
+{
+    public int connectionId;
+    public string playerName;
+    //add more to this as we have more information
+}
+
 public class ServerScript : MonoBehaviour 
 {
+    private List<ServerClient> clients = new List<ServerClient>();
+
     private const int MAX_CONNECTION = 6;
     private int port = 5701;
 
@@ -50,13 +59,27 @@ public class ServerScript : MonoBehaviour
             case NetworkEventType.Nothing: break;
             case NetworkEventType.ConnectEvent:
                 Debug.Log("Player " + connectionId + " has connected");
+                OnConnection(connectionId);
                 break;
             case NetworkEventType.DataEvent:
                 string msg = Encoding.Unicode.GetString(recBuffer, 0, dataSize);
-                Debug.Log("Player " + connectionId + " has sent: ");
+                Debug.Log("Player " + connectionId + " has sent: " + msg);
+                string[] splitData = msg.Split('|');
+
+                switch (splitData[0])
+                {
+                    case "":
+                        break;
+
+                    default:
+                        Debug.Log("Invalid message: " + msg);
+                        break;
+                }
+
                 break;
             case NetworkEventType.DisconnectEvent:
                 Debug.Log("Player " + connectionId + " has disconnected");
+                OnDisconnect(connectionId);
                 break;
 
             case NetworkEventType.BroadcastEvent:
@@ -65,4 +88,51 @@ public class ServerScript : MonoBehaviour
         }
     }
 
+    private void OnConnection(int cnnID)
+    {
+        ServerClient c = new ServerClient();
+        c.connectionId = cnnID;
+        c.playerName = "Player " + cnnID.ToString();
+        clients.Add(c);
+
+        string msg = "NAME|" + c.playerName + "|" + c.connectionId + "|";
+        foreach (ServerClient sc in clients)
+        {
+            msg += sc.playerName + "%" + sc.connectionId + "|";
+        }
+        msg = msg.Trim('|');
+        Send(msg, reliableChannel, cnnID);
+
+        // Send new connection so player spawns for other clients
+        Send("CNN|" + c.playerName + "|" + c.connectionId, reliableChannel, clients);
+    }
+
+    private void OnDisconnect(int cnnID)
+    {
+        foreach (ServerClient c in clients)
+        {
+            if (c.connectionId == cnnID)
+            {
+                clients.Remove(c);
+            }
+        }
+
+        Send("DC|" + cnnID, reliableChannel, clients);
+    }
+
+    private void Send(string message, int channelId, int cnnId)
+    {
+        List<ServerClient> c = new List<ServerClient>();
+        c.Add(clients.Find(x => x.connectionId == cnnId));
+        Send(message, channelId, c);
+    }
+
+    private void Send(string message, int channelId, List<ServerClient> c)
+    {
+        byte[] msg = Encoding.Unicode.GetBytes(message);
+        foreach (ServerClient sc in c)
+        {
+            NetworkTransport.Send(hostID, sc.connectionId, channelId, msg, message.Length * sizeof(char), out error);
+        }
+    }
 }

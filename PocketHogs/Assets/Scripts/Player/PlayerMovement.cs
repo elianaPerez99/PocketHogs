@@ -23,7 +23,5 @@ public class PlayerMovement : MonoBehaviour
 	private void UpdatePos()
 	{
 		transform.Translate(xMove, yMove, 0);
-
-		// Use unreliable, update with unit position
 	}
 }

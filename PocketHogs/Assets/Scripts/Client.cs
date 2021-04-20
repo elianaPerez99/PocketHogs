@@ -4,6 +4,16 @@ using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using UnityEngine.Experimental.Rendering;
+using System.Text;
+using System.Runtime.InteropServices;
+
+public class Player
+{
+    public string playerName;
+    public GameObject avatar;
+    public int conncetionId;
+}
 
 public class Client : MonoBehaviour {
     private const int MAX_CONNECTION = 6;
@@ -15,6 +25,7 @@ public class Client : MonoBehaviour {
     private int reliableChannel;
     private int unreliableChannel;
 
+    private int myClientId;
     private int connectionID;
 
     private float connectionTime;
@@ -22,6 +33,9 @@ public class Client : MonoBehaviour {
     private bool isStarted = false;
     private byte error;
     private string ip;
+
+    public GameObject playerPrefab;
+    public Dictionary<int,Player> players = new Dictionary<int,Player>();
 
     private void Awake()
     {
@@ -44,7 +58,33 @@ public class Client : MonoBehaviour {
             {
                 case NetworkEventType.Nothing: break;
                 case NetworkEventType.ConnectEvent: break;
-                case NetworkEventType.DataEvent: break;
+                case NetworkEventType.DataEvent:
+                    string msg = Encoding.Unicode.GetString(recBuffer, 0, dataSize);
+                    string[] splitData = msg.Split('|');
+
+                    switch(splitData[0])
+                    {
+                        case "NAME":
+                            Debug.Log("Client join message");
+                            OnJoin(splitData);
+                            break;
+
+                        case "CNN":
+                            Debug.Log("Client connect message");
+                            SpawnPlayer(splitData[1], int.Parse(splitData[2]));
+                            break;
+
+                        case "DC":
+                            PlayerDisconnected(int.Parse(splitData[1]));
+                            break;
+
+                        default:
+                            Debug.Log("Client disconnect message");
+                            Debug.Log("Invalid message: " + msg);
+                            break;
+                    }
+
+                    break;
                 case NetworkEventType.DisconnectEvent: break;
 
                 case NetworkEventType.BroadcastEvent:
@@ -97,6 +137,49 @@ public class Client : MonoBehaviour {
 
         }
     }
-       
 
+    private void Send(string message, int channelId)
+    {
+        byte[] msg = Encoding.Unicode.GetBytes(message);
+        NetworkTransport.Send(hostID, connectionID, channelId, msg, message.Length * sizeof(char), out error);
+    }
+
+    // Need to spawn in players on join
+    private void OnJoin(string[] data)
+    {
+        // Set my client id
+        myClientId = int.Parse(data[2]);
+
+        // Spawn all players currently in game
+        for(int i = 3; i < data.Length -1; i++)
+        {
+            string[] d = data[i].Split('%');
+            SpawnPlayer(d[0], int.Parse(d[1]));
+        }
+    }
+
+    // Spawn in players
+    private void SpawnPlayer(string playerName, int cnnId)
+    {
+        Debug.Log("Spawn player " + cnnId);
+        GameObject go = Instantiate(playerPrefab) as GameObject;
+
+        if(cnnId == myClientId)
+        {
+            go.AddComponent<PlayerMovement>();
+            GameObject.Find("Canvas").SetActive(false);
+            isStarted = true;
+        }
+
+        Player p = new Player();
+        p.avatar = go;
+        p.playerName = playerName;
+        players.Add(cnnId,p);
+    }
+
+    private void PlayerDisconnected(int cnnId)
+    {
+        Destroy(players[cnnId].avatar);
+        players.Remove(cnnId);
+    }
 }
