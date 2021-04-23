@@ -6,69 +6,63 @@ public class HedgehogSpawner : MonoBehaviour {
 
 	//variables
 	public GameObject hhPrefab;
-	public int maxHogsPer = 6;
-	public int minHogsPer = 1;
-	private int currentMax = 1;
-	private int currentAmount = 0;
-	private int currentNumClients = 0;
-	public Vector2 spawnMin;
-	public Vector2 spawnMax;
-
 
 	//functions
 
-	// Update is called once per frame
-	private void Start()
+	private List<hhData> GetNewDataFromServer(string msg)
 	{
-		//eventually we need to get the number of clients from the server, but for now we manually put it in
-		//ChangeNumHogs(1);
+		List<hhData> hedgeHogDataList = new List<hhData>();
+
+		string[] tempArray = msg.Split('~');
+		foreach (string str in tempArray)
+		{
+			string[] tempStrArray = str.Split('|');
+			hhData tempD;
+			tempD.id = int.Parse(tempStrArray[0]);
+			//getting position
+			string[] temp = tempStrArray[1].Substring(1, tempStrArray[1].Length - 2).Split(',');
+			tempD.position = new Vector3(float.Parse(temp[0]), float.Parse(temp[1]), float.Parse(temp[2]));
+			//getting rotation
+			temp = tempStrArray[2].Substring(1, tempStrArray[2].Length - 2).Split(',');
+			tempD.rotation = new Vector3(float.Parse(temp[0]), float.Parse(temp[1]), float.Parse(temp[2]));
+			//getting velocity
+			temp = tempStrArray[3].Substring(1, tempStrArray[3].Length - 2).Split(',');
+			tempD.velocity = new Vector3(float.Parse(temp[0]), float.Parse(temp[1]), float.Parse(temp[2]));
+
+			hedgeHogDataList.Add(tempD);
+		}
+
+		return hedgeHogDataList;
 	}
-	void Update () 
+
+	public void UpdateHogs(string msg)
 	{
+		List<hhData> list = GetNewDataFromServer(msg);
 		HedgeHog[] hogs = gameObject.GetComponentsInChildren<HedgeHog>();
-		currentAmount = hogs.Length;
-		AdjustHedgeHogs();
-	}
-
-	private void ChangeNumHogs(int numOfClients)
-	{
-		currentMax = (int)Random.Range(minHogsPer, maxHogsPer)*numOfClients;
-	}
-
-	//spawn hogs if there are too few
-	private void SpawnHedgeHogs()
-	{
-		//later we need to spawn via types or potentially spawn types based on biome
-		while (currentAmount < currentMax)
+		
+		foreach (hhData h in list)
 		{
-			var position = new Vector3(Random.Range(spawnMin.x, spawnMax.x), Random.Range(spawnMin.y, spawnMax.y), 0);
-			GameObject temp = Instantiate(hhPrefab, position, Quaternion.identity);
-			temp.transform.SetParent(transform);
-			currentAmount++;
+			bool exists = false;
+			foreach (HedgeHog hog in hogs)
+			{
+				if (h.id == hog.id)
+				{
+					exists = true;
+					//move this to an update function that deals with smoothness
+					hog.gameObject.transform.position = h.position;
+					hog.gameObject.transform.rotation = Quaternion.Euler(h.rotation.x, h.rotation.y, h.rotation.z);
+					hog.gameObject.GetComponent<Rigidbody2D>().velocity = h.velocity;
+				}
+			}
+			if (!exists)
+			{
+				GameObject newHoggie = Instantiate(hhPrefab, h.position, Quaternion.Euler(h.rotation.x, h.rotation.y, h.rotation.z),transform);
+				newHoggie.GetComponent<HedgeHog>().id = h.id;
+				newHoggie.GetComponent<Rigidbody2D>().velocity = h.velocity;
+			}
+
 		}
+		
 	}
 
-	//delete them if there are too many
-	private void DeleteHedgeHogs()
-	{
-		HedgeHog[] hogs = gameObject.GetComponentsInChildren<HedgeHog>();
-		for (int i = hogs.Length-1; i >= currentMax; i--)
-		{
-			hogs[i].Destroy();
-			currentAmount--;
-		}
-	}
-
-
-	private void AdjustHedgeHogs()
-	{
-		if (currentMax < currentAmount)
-		{
-			DeleteHedgeHogs();
-		}
-		if (currentMax > currentAmount)
-		{
-			SpawnHedgeHogs();
-		}
-	}
 }
