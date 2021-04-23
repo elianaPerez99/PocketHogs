@@ -1,10 +1,10 @@
 WindowsStandalone
 PlayerPath?
-D:/School/Spring 2021/server.exe
+D:/School/Spring 2021/PocketHogs Testing/client.exe
 SceneListBegin?
-Assets/Scenes/Server.unity
 Assets/Scenes/ClientStartMenu.unity
 Assets/Scenes/Map1.unity
+Assets/Scenes/Server.unity
 SceneListEnd?
 05524b8f659e7bfe5756d1335fec24ba UnityEngine.Timeline.dll:UnityEngine.Timeline.ActivationPlayableAsset
 4b12dd839b2293f8457cd67cc3610b85 UnityEngine.Timeline.dll:UnityEngine.Timeline.ActivationTrack

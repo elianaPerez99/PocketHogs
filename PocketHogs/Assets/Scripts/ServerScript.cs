@@ -8,6 +8,7 @@ public class ServerClient
 {
     public int connectionId;
     public string playerName;
+    public Vector2 position;
     //add more to this as we have more information
 }
 
@@ -68,7 +69,9 @@ public class ServerScript : MonoBehaviour
 
                 switch (splitData[0])
                 {
-                    case "":
+                    case "SENDPLYPOS":
+                        OnSendPlayerPosition(connectionId, float.Parse(splitData[2]), float.Parse(splitData[3]));
+                        Send(msg, unreliableChannel, clients);
                         break;
 
                     default:
@@ -93,18 +96,20 @@ public class ServerScript : MonoBehaviour
         ServerClient c = new ServerClient();
         c.connectionId = cnnID;
         c.playerName = "Player " + cnnID.ToString();
+        c.position = new Vector3(0, 0, 0);
         clients.Add(c);
 
         string msg = "NAME|" + c.playerName + "|" + c.connectionId + "|";
         foreach (ServerClient sc in clients)
         {
-            msg += sc.playerName + "%" + sc.connectionId + "|";
+            msg += sc.playerName + "%" + sc.connectionId + "%" + sc.position.x + "%" + sc.position.y + "|";
         }
         msg = msg.Trim('|');
         Send(msg, reliableChannel, cnnID);
 
         // Send new connection so player spawns for other clients
-        Send("CNN|" + c.playerName + "|" + c.connectionId, reliableChannel, clients);
+        msg = "CNN|" + c.playerName + "|" + c.connectionId + "|" + c.position.x + "|" + c.position.y;
+        Send(msg, reliableChannel, clients);
     }
 
     private void OnDisconnect(int cnnID)
@@ -117,6 +122,7 @@ public class ServerScript : MonoBehaviour
             }
         }
 
+        // Tell everyone that someone has disconnected
         Send("DC|" + cnnID, reliableChannel, clients);
     }
 
@@ -134,5 +140,11 @@ public class ServerScript : MonoBehaviour
         {
             NetworkTransport.Send(hostID, sc.connectionId, channelId, msg, message.Length * sizeof(char), out error);
         }
+    }
+
+    // Set position of player from data they sent
+    private void OnSendPlayerPosition(int cnnID, float x, float y)
+    {
+        clients.Find(c => c.connectionId == cnnID).position = new Vector3(x, y, 0);
     }
 }

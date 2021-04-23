@@ -7,7 +7,8 @@ public class PlayerMovement : MonoBehaviour
 	private Rigidbody rb;
 	private float xMove;
 	private float yMove;
-	private float speed = 5.0f;
+	private float speed = 0.5f;
+
 
 
 	private void Start()
@@ -21,6 +22,6 @@ public class PlayerMovement : MonoBehaviour
 		float xMove = Input.GetAxis("Horizontal") * speed;
 		float yMove = Input.GetAxis("Vertical") * speed;
 
-		rb.velocity = new Vector2(xMove, yMove);
+		rb.transform.Translate(xMove, yMove, 0);
 	}
 }
