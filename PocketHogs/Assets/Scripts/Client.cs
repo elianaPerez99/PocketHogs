@@ -75,11 +75,11 @@ public class Client : MonoBehaviour {
                             break;
 
                         case "DC":
+                            Debug.Log("Client disconnect message");
                             PlayerDisconnected(int.Parse(splitData[1]));
                             break;
 
                         default:
-                            Debug.Log("Client disconnect message");
                             Debug.Log("Invalid message: " + msg);
                             break;
                     }
@@ -167,7 +167,6 @@ public class Client : MonoBehaviour {
         if(cnnId == myClientId)
         {
             go.AddComponent<PlayerMovement>();
-            GameObject.Find("Canvas").SetActive(false);
             isStarted = true;
         }
 
