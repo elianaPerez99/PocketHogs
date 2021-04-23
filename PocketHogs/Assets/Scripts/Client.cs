@@ -4,6 +4,16 @@ using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using UnityEngine.Experimental.Rendering;
+using System.Text;
+using System.Runtime.InteropServices;
+
+public class Player
+{
+    public string playerName;
+    public GameObject avatar;
+    public int conncetionId;
+}
 
 public class Client : MonoBehaviour {
     private const int MAX_CONNECTION = 6;
@@ -15,6 +25,7 @@ public class Client : MonoBehaviour {
     private int reliableChannel;
     private int unreliableChannel;
 
+    private int myClientId;
     private int connectionID;
 
     private float connectionTime;
@@ -22,6 +33,14 @@ public class Client : MonoBehaviour {
     private bool isStarted = false;
     private byte error;
     private string ip;
+
+    // Players information
+    public GameObject playerPrefab;
+    public Dictionary<int,Player> players = new Dictionary<int,Player>();
+
+    // Information for regularly keeping track of player movement updates
+    private float lastMovementUpdate;
+    private float movementUpdateRate = 0.05f;
 
     private void Awake()
     {
@@ -44,12 +63,58 @@ public class Client : MonoBehaviour {
             {
                 case NetworkEventType.Nothing: break;
                 case NetworkEventType.ConnectEvent: break;
-                case NetworkEventType.DataEvent: break;
+                case NetworkEventType.DataEvent:
+                    string msg = Encoding.Unicode.GetString(recBuffer, 0, dataSize);
+                    string[] splitData = msg.Split('|');
+
+                    switch(splitData[0])
+                    {
+                        case "NAME":
+                            Debug.Log("Client join message");
+                            OnJoin(splitData);
+                            break;
+
+                        case "CNN":
+                            Debug.Log("Client connect message");
+                            SpawnPlayer(splitData[1], int.Parse(splitData[2]), float.Parse(splitData[3]), float.Parse(splitData[4]));
+                            break;
+
+                        case "DC":
+                            Debug.Log("Client disconnect message");
+                            PlayerDisconnected(int.Parse(splitData[1]));
+                            break;
+
+                        case "SENDPLYPOS":
+                            OnSendPlayerPosition(splitData);
+                            break;
+
+                        default:
+                            Debug.Log("Invalid message: " + msg);
+                            break;
+                    }
+
+                    break;
                 case NetworkEventType.DisconnectEvent: break;
 
                 case NetworkEventType.BroadcastEvent:
 
                     break;
+            }
+
+            // Get my player for position sending checks
+            GameObject myPlayer = players[myClientId].avatar;
+
+            // Get player positions
+            if (Time.time - lastMovementUpdate > movementUpdateRate)
+            {
+                // Resetv time check frame
+                lastMovementUpdate = Time.time;
+
+                // Put together message to set and request locations
+                string msg = "SENDPLYPOS|" + myClientId + '|' + myPlayer.transform.position.x + '|' + myPlayer.transform.position.y;
+
+                // Send out my position
+                Send(msg, unreliableChannel);
             }
         }
         else
@@ -97,6 +162,72 @@ public class Client : MonoBehaviour {
 
         }
     }
-       
 
+    private void Send(string message, int channelId)
+    {
+        byte[] msg = Encoding.Unicode.GetBytes(message);
+        NetworkTransport.Send(hostID, connectionID, channelId, msg, message.Length * sizeof(char), out error);
+    }
+
+    // Need to spawn in players on join
+    private void OnJoin(string[] data)
+    {
+        // Set my client id
+        myClientId = int.Parse(data[2]);
+
+        // Spawn all players currently in game
+        for(int i = 3; i < data.Length -1; i++)
+        {
+            string[] d = data[i].Split('%');
+            SpawnPlayer(d[0], int.Parse(d[1]), float.Parse(d[2]), float.Parse(d[3]));
+        }
+    }
+
+    // Spawn in players
+    private void SpawnPlayer(string playerName, int cnnId, float x, float y)
+    {
+        // Spawn player object
+        Debug.Log("Spawn player " + cnnId);
+        GameObject go = Instantiate(playerPrefab) as GameObject;
+
+        // Set player object position
+        Vector3 position = new Vector3(x, y, 0);
+        go.transform.position = position;
+
+        // If player is me, give them a controller so I can move them
+        if(cnnId == myClientId)
+        {
+            go.AddComponent<PlayerMovement>();
+            isStarted = true;
+        }
+
+        // Create new player data to add to the player dictionary
+        Player p = new Player();
+        p.avatar = go;
+        p.playerName = playerName;
+        players.Add(cnnId,p);
+    }
+
+    // Set position of players and send my own
+    private void OnSendPlayerPosition(string[] data)
+    {
+        // If not me, then parse position data
+        if (int.Parse(data[1]) != myClientId)
+        {
+            // Parsing position data from message
+            Vector3 position = Vector3.zero;
+            position.x = float.Parse(data[2]);
+            position.y = float.Parse(data[3]);
+
+            // Set given player's position to parsed position
+            players[int.Parse(data[1])].avatar.transform.position = position;
+        }
+    }
+
+    // Remove date of player who has disconnected
+    private void PlayerDisconnected(int cnnId)
+    {
+        Destroy(players[cnnId].avatar);
+        players.Remove(cnnId);
+    }
 }
