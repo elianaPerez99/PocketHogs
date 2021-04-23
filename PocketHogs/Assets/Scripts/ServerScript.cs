@@ -153,7 +153,6 @@ public class ServerScript : MonoBehaviour
                 msg += hh.id.ToString() + "|" + hh.position.ToString() + "|" + hh.rotation.ToString() + "|" + hh.velocity.ToString() + "~";
             }
             msg = msg.Trim('~');
-            Debug.Log("Sending: " + msg);
         }
         
         return msg;

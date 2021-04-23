@@ -24,6 +24,8 @@ public class Client : MonoBehaviour {
     private byte error;
     private string ip;
 
+    //game stuff
+    HedgehogSpawner spawner;
     private void Awake()
     {
         DontDestroyOnLoad(this.gameObject);
@@ -45,13 +47,12 @@ public class Client : MonoBehaviour {
             {
                 case NetworkEventType.Nothing:
                     {
-                        string msg = Encoding.Unicode.GetString(recBuffer, 0, dataSize);
-                        Debug.Log("Recieving: " + msg);
                         break;
                     }
                 case NetworkEventType.DataEvent:
                     {
                         string msg = Encoding.Unicode.GetString(recBuffer, 0, dataSize);
+                        GetHedgeHogs(msg);
                         Debug.Log("Recieving: " + msg);
                         break;
                     }
@@ -93,7 +94,7 @@ public class Client : MonoBehaviour {
                 connectionTime = Time.time;
                 isConnected = true;
                 SceneManager.LoadScene("Map1");
-
+                spawner = GameObject.Find("HedgeHogSpawner").GetComponent<HedgehogSpawner>();
             }
             else
             {
@@ -107,6 +108,6 @@ public class Client : MonoBehaviour {
        
     public void GetHedgeHogs(string msg)
     {
-        
+        spawner.UpdateHogs(msg);
     }
 }
