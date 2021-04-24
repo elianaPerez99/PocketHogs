@@ -61,33 +61,24 @@ public class ServerScript : MonoBehaviour
         switch (recData)
         {
             case NetworkEventType.Nothing:
-                {
-                    SendHHData(channelId);
                     
                     break;
-                }
             case NetworkEventType.ConnectEvent:
-                {
                     Debug.Log("Player " + connectionId + " has connected");
                     OnConnection(connectionId);
                     break;
-                }
             case NetworkEventType.DataEvent:
-                {
                     string msg = Encoding.Unicode.GetString(recBuffer, 0, dataSize);
                     Debug.Log("Player " + connectionId + " has sent: ");
                     break;
-                }
             case NetworkEventType.DisconnectEvent:
-                {
                     Debug.Log("Player " + connectionId + " has disconnected");
                     OnDisconnect(connectionId);
                     break;
-                }
             case NetworkEventType.BroadcastEvent:
-
                 break;
         }
+        SendHHData(channelId);
     }
 
     private void OnConnection(int cnnID)

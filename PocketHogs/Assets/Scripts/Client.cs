@@ -26,12 +26,18 @@ public class Client : MonoBehaviour {
 
     //game stuff
     HedgehogSpawner spawner;
+    bool hasSpawner = false;
     private void Awake()
     {
         DontDestroyOnLoad(this.gameObject);
     }
     private void Update()
     {
+        if (SceneManager.GetActiveScene().name.Equals("Map1") && !hasSpawner)
+        {
+            spawner = GameObject.Find("HedgeHogSpawner").GetComponent<HedgehogSpawner>();
+            hasSpawner = true;
+        }
         //only running update information if the client has already connected
         if (isConnected)
         {
@@ -46,16 +52,14 @@ public class Client : MonoBehaviour {
             switch (recData)
             {
                 case NetworkEventType.Nothing:
-                    {
                         break;
-                    }
                 case NetworkEventType.DataEvent:
-                    {
+                    if (hasSpawner)
+                    { 
                         string msg = Encoding.Unicode.GetString(recBuffer, 0, dataSize);
                         GetHedgeHogs(msg);
-                        Debug.Log("Recieving: " + msg);
-                        break;
                     }
+                    break;
 
             }
         }
@@ -94,7 +98,7 @@ public class Client : MonoBehaviour {
                 connectionTime = Time.time;
                 isConnected = true;
                 SceneManager.LoadScene("Map1");
-                spawner = GameObject.Find("HedgeHogSpawner").GetComponent<HedgehogSpawner>();
+                
             }
             else
             {
