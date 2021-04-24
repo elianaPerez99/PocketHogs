@@ -99,7 +99,7 @@ public class Client : MonoBehaviour {
                         case "HH":
                             if (hasSpawner)
                             {
-                                GetHedgeHogs(splitData[1]);
+                                GetHedgeHogs(splitData[1], Time.deltaTime);
                             }
                             break;
                         default:
@@ -246,8 +246,8 @@ public class Client : MonoBehaviour {
     }
 
     //update the hedge hogs locations
-    public void GetHedgeHogs(string msg)
+    public void GetHedgeHogs(string msg, float sentTime)
     {
-        spawner.UpdateHogs(msg);
+        spawner.UpdateHogs(msg, sentTime);
     }
 }

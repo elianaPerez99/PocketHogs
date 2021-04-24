@@ -6,7 +6,7 @@ public class HedgehogSpawner : MonoBehaviour {
 
 	//variables
 	public GameObject hhPrefab;
-
+	private float lastSentTime = 0f;
 	//functions
 
 	private List<hhData> GetNewDataFromServer(string msg)
@@ -35,7 +35,7 @@ public class HedgehogSpawner : MonoBehaviour {
 		return hedgeHogDataList;
 	}
 
-	public void UpdateHogs(string msg)
+	public void UpdateHogs(string msg, float sentTime)
 	{
 		List<hhData> list = GetNewDataFromServer(msg);
 		HedgeHog[] hogs = gameObject.GetComponentsInChildren<HedgeHog>();
@@ -49,7 +49,8 @@ public class HedgehogSpawner : MonoBehaviour {
 				{
 					exists = true;
 					//move this to an update function that deals with smoothness
-					hog.gameObject.transform.position = h.position;
+					//hog.gameObject.transform.position = h.position;
+					hog.newPosition = h.position;
 					hog.gameObject.transform.rotation = Quaternion.Euler(h.rotation.x, h.rotation.y, h.rotation.z);
 					hog.gameObject.GetComponent<Rigidbody2D>().velocity = h.velocity;
 				}
@@ -58,11 +59,11 @@ public class HedgehogSpawner : MonoBehaviour {
 			{
 				GameObject newHoggie = Instantiate(hhPrefab, h.position, Quaternion.Euler(h.rotation.x, h.rotation.y, h.rotation.z),transform);
 				newHoggie.GetComponent<HedgeHog>().id = h.id;
-				newHoggie.GetComponent<Rigidbody2D>().velocity = h.velocity;
+				newHoggie.GetComponent<HedgeHog>().newPosition = h.position;
 			}
 
 		}
-		
+		lastSentTime = sentTime;
 	}
 
 }

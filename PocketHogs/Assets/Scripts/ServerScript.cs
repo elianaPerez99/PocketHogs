@@ -30,7 +30,7 @@ public class ServerScript : MonoBehaviour
     private byte error;
 
     //hedgehog stuff
-    ServerSpawner hhSpawner;
+    public ServerSpawner hhSpawner;
     private void Start()
     {
         NetworkTransport.Init();
@@ -43,7 +43,6 @@ public class ServerScript : MonoBehaviour
 
         hostID = NetworkTransport.AddHost(topop, port, null);
         webHostId = NetworkTransport.AddWebsocketHost(topop, port, null);
-        hhSpawner = new ServerSpawner();
         isStarted = true;
     }
 
@@ -60,14 +59,15 @@ public class ServerScript : MonoBehaviour
         NetworkEventType recData = NetworkTransport.Receive(out recHostId, out connectionId, out channelId, recBuffer, bufferSize, out dataSize, out error);
         switch (recData)
         {
-            case NetworkEventType.Nothing: break;
+            case NetworkEventType.Nothing:
+                SendHHData(channelId);
+                break;
             case NetworkEventType.ConnectEvent:
                 Debug.Log("Player " + connectionId + " has connected");
                 OnConnection(connectionId);
                 break;
             case NetworkEventType.DataEvent:
                 string msg = Encoding.Unicode.GetString(recBuffer, 0, dataSize);
-                Debug.Log("Player " + connectionId + " has sent: " + msg);
                 string[] splitData = msg.Split('|');
 
                 switch (splitData[0])
@@ -92,7 +92,7 @@ public class ServerScript : MonoBehaviour
 
                 break;
         }
-        SendHHData(channelId);
+
     }
 
     private void OnConnection(int cnnID)
