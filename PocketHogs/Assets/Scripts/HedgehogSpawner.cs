@@ -13,10 +13,10 @@ public class HedgehogSpawner : MonoBehaviour {
 	{
 		List<hhData> hedgeHogDataList = new List<hhData>();
 
-		string[] tempArray = msg.Split('~');
+		string[] tempArray = msg.Split('`');
 		foreach (string str in tempArray)
 		{
-			string[] tempStrArray = str.Split('|');
+			string[] tempStrArray = str.Split('~');
 			hhData tempD;
 			tempD.id = int.Parse(tempStrArray[0]);
 			//getting position

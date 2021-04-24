@@ -42,12 +42,21 @@ public class Client : MonoBehaviour {
     private float lastMovementUpdate;
     private float movementUpdateRate = 0.05f;
 
+    //hh spawner 
+    HedgehogSpawner spawner;
+    bool hasSpawner = false;
+
     private void Awake()
     {
         DontDestroyOnLoad(this.gameObject);
     }
     private void Update()
     {
+        if (SceneManager.GetActiveScene().name.Equals("Map1") && !hasSpawner)
+        {
+            spawner = GameObject.Find("HedgeHogSpawner").GetComponent<HedgehogSpawner>();
+            hasSpawner = true;
+        }
         //only running update information if the client has already connected
         if (isConnected)
         {
@@ -87,7 +96,12 @@ public class Client : MonoBehaviour {
                         case "SENDPLYPOS":
                             OnSendPlayerPosition(splitData);
                             break;
-
+                        case "HH":
+                            if (hasSpawner)
+                            {
+                                GetHedgeHogs(splitData[1]);
+                            }
+                            break;
                         default:
                             Debug.Log("Invalid message: " + msg);
                             break;
@@ -229,5 +243,11 @@ public class Client : MonoBehaviour {
     {
         Destroy(players[cnnId].avatar);
         players.Remove(cnnId);
+    }
+
+    //update the hedge hogs locations
+    public void GetHedgeHogs(string msg)
+    {
+        spawner.UpdateHogs(msg);
     }
 }

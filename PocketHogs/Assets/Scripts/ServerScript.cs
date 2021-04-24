@@ -14,6 +14,7 @@ public class ServerClient
 
 public class ServerScript : MonoBehaviour 
 {
+    //networking stuff
     private List<ServerClient> clients = new List<ServerClient>();
 
     private const int MAX_CONNECTION = 6;
@@ -28,6 +29,8 @@ public class ServerScript : MonoBehaviour
     private bool isStarted = false;
     private byte error;
 
+    //hedgehog stuff
+    ServerSpawner hhSpawner;
     private void Start()
     {
         NetworkTransport.Init();
@@ -40,7 +43,7 @@ public class ServerScript : MonoBehaviour
 
         hostID = NetworkTransport.AddHost(topop, port, null);
         webHostId = NetworkTransport.AddWebsocketHost(topop, port, null);
-
+        hhSpawner = new ServerSpawner();
         isStarted = true;
     }
 
@@ -89,6 +92,7 @@ public class ServerScript : MonoBehaviour
 
                 break;
         }
+        SendHHData(channelId);
     }
 
     private void OnConnection(int cnnID)
@@ -110,6 +114,7 @@ public class ServerScript : MonoBehaviour
         // Send new connection so player spawns for other clients
         msg = "CNN|" + c.playerName + "|" + c.connectionId + "|" + c.position.x + "|" + c.position.y;
         Send(msg, reliableChannel, clients);
+        hhSpawner.SpawnHedgeHogs(clients.Count);
     }
 
     private void OnDisconnect(int cnnID)
@@ -147,4 +152,27 @@ public class ServerScript : MonoBehaviour
     {
         clients.Find(c => c.connectionId == cnnID).position = new Vector3(x, y, 0);
     }
+
+    private void SendHHData(int channelId)
+    {
+        string message = OutputHHDataToString();
+        Send(message, channelId, clients);
+    }
+
+    //hedge hog data to send
+    private string OutputHHDataToString()
+    {
+        string msg = "HH|";
+        if (hhSpawner.GetList().Count > 0)
+        {
+            foreach (hhData hh in hhSpawner.GetList())
+            {
+                msg += hh.id.ToString() + "~" + hh.position.ToString() + "~" + hh.rotation.ToString() + "~" + hh.velocity.ToString() + "`";
+            }
+            msg = msg.Trim('`');
+        }
+
+        return msg;
+    }
+
 }
