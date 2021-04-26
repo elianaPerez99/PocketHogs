@@ -7,13 +7,16 @@ public class PlayerMovement : MonoBehaviour
 	private Rigidbody rb;
 	private float xMove;
 	private float yMove;
-	private float speed = 0.5f;
+	private float speed = 5.0f;
 
+	Camera gameCamera;
 
 
 	private void Start()
 	{
 		rb = GetComponent<Rigidbody>();
+
+		gameCamera = FindObjectOfType<Camera>();
 	}
 
 	// Update is called once per frame
@@ -22,6 +25,18 @@ public class PlayerMovement : MonoBehaviour
 		float xMove = Input.GetAxis("Horizontal") * speed;
 		float yMove = Input.GetAxis("Vertical") * speed;
 
-		rb.transform.Translate(xMove, yMove, 0);
+		rb.velocity = new Vector3(xMove, yMove, 0);
+
+		CameraFollow();
+	}
+
+	// Make camera follow moveable player
+	private void CameraFollow()
+	{
+		Vector3 position = gameCamera.transform.position;
+		position.y = transform.position.y;
+		position.x = transform.position.x;
+
+		gameCamera.transform.position = position;
 	}
 }

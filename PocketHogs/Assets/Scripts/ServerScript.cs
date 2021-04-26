@@ -74,7 +74,7 @@ public class ServerScript : MonoBehaviour
                 {
                     case "SENDPLYPOS":
                         OnSendPlayerPosition(connectionId, float.Parse(splitData[2]), float.Parse(splitData[3]));
-                        Send(msg, unreliableChannel, clients);
+                        Send(msg, reliableChannel, clients);
                         break;
 
                     default:

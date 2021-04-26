@@ -128,7 +128,7 @@ public class Client : MonoBehaviour {
                 string msg = "SENDPLYPOS|" + myClientId + '|' + myPlayer.transform.position.x + '|' + myPlayer.transform.position.y;
 
                 // Send out my position
-                Send(msg, unreliableChannel);
+                Send(msg, reliableChannel);
             }
         }
         else
@@ -211,6 +211,7 @@ public class Client : MonoBehaviour {
         // If player is me, give them a controller so I can move them
         if(cnnId == myClientId)
         {
+            go.GetComponent<Rigidbody>().isKinematic = false;
             go.AddComponent<PlayerMovement>();
             isStarted = true;
         }
