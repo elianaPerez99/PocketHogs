@@ -31,6 +31,10 @@ public class ServerScript : MonoBehaviour
 
     //hedgehog stuff
     public ServerSpawner hhSpawner;
+
+    // Value for position value compression
+    private float compressionVal = 100;
+
     private void Start()
     {
         NetworkTransport.Init();
@@ -73,7 +77,7 @@ public class ServerScript : MonoBehaviour
                 switch (splitData[0])
                 {
                     case "SENDPLYPOS":
-                        OnSendPlayerPosition(connectionId, float.Parse(splitData[2]), float.Parse(splitData[3]));
+                        OnSendPlayerPosition(connectionId, int.Parse(splitData[2]), int.Parse(splitData[3]));
                         Send(msg, reliableChannel, clients);
                         break;
 
@@ -106,13 +110,21 @@ public class ServerScript : MonoBehaviour
         string msg = "NAME|" + c.playerName + "|" + c.connectionId + "|";
         foreach (ServerClient sc in clients)
         {
-            msg += sc.playerName + "%" + sc.connectionId + "%" + sc.position.x + "%" + sc.position.y + "|";
+            Vector2 position;
+            position.x = CompressPosFloat(sc.position.x);
+            position.y = CompressPosFloat(sc.position.y);
+
+            msg += sc.playerName + "%" + sc.connectionId + "%" + position.x + "%" + position.y + "|";
         }
         msg = msg.Trim('|');
         Send(msg, reliableChannel, cnnID);
 
         // Send new connection so player spawns for other clients
-        msg = "CNN|" + c.playerName + "|" + c.connectionId + "|" + c.position.x + "|" + c.position.y;
+        Vector2 pos;
+        pos.x = CompressPosFloat(c.position.x);
+        pos.y = CompressPosFloat(c.position.y);
+
+        msg = "CNN|" + c.playerName + "|" + c.connectionId + "|" + pos.x + "|" + pos.y;
         Send(msg, reliableChannel, clients);
         hhSpawner.SpawnHedgeHogs(clients.Count);
     }
@@ -148,9 +160,13 @@ public class ServerScript : MonoBehaviour
     }
 
     // Set position of player from data they sent
-    private void OnSendPlayerPosition(int cnnID, float x, float y)
+    private void OnSendPlayerPosition(int cnnID, int x, int y)
     {
-        clients.Find(c => c.connectionId == cnnID).position = new Vector3(x, y, 0);
+        Vector2 pos;
+        pos.x = DecompressPosFloat(x);
+        pos.y = DecompressPosFloat(y);
+
+        clients.Find(c => c.connectionId == cnnID).position = new Vector3(pos.x, pos.y, 0);
     }
 
     private void SendHHData(int channelId)
@@ -175,4 +191,15 @@ public class ServerScript : MonoBehaviour
         return msg;
     }
 
+    // Compress position data
+    private int CompressPosFloat(float x)
+    {
+        return (int)(x * compressionVal);
+    }
+
+    // Decompress position data
+    private float DecompressPosFloat(int x)
+    {
+        return (float)x / compressionVal;
+    }
 }

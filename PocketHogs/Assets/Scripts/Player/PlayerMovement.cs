@@ -4,12 +4,17 @@ using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
 {
+	// For player movement
 	private Rigidbody rb;
 	private float xMove;
 	private float yMove;
 	private float speed = 5.0f;
 
-	Camera gameCamera;
+	// Game camera
+	private Camera gameCamera;
+
+	// Check if moved
+	private Vector3 lastPos;
 
 
 	private void Start()
@@ -17,6 +22,8 @@ public class PlayerMovement : MonoBehaviour
 		rb = GetComponent<Rigidbody>();
 
 		gameCamera = FindObjectOfType<Camera>();
+
+		lastPos = transform.position;
 	}
 
 	// Update is called once per frame
@@ -38,5 +45,17 @@ public class PlayerMovement : MonoBehaviour
 		position.x = transform.position.x;
 
 		gameCamera.transform.position = position;
+	}
+
+	// Check if moved since last update
+	public bool HasMoved()
+	{
+		return lastPos != transform.position;
+	}
+
+	// Sets new position update check
+	public void SetLastPos()
+	{
+		lastPos = transform.position;
 	}
 }

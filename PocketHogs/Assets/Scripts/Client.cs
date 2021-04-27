@@ -46,6 +46,9 @@ public class Client : MonoBehaviour {
     HedgehogSpawner spawner;
     bool hasSpawner = false;
 
+    // Value for position value compression
+    private float compressionVal = 100;
+
     private void Awake()
     {
         DontDestroyOnLoad(this.gameObject);
@@ -85,7 +88,7 @@ public class Client : MonoBehaviour {
 
                         case "CNN":
                             Debug.Log("Client connect message");
-                            SpawnPlayer(splitData[1], int.Parse(splitData[2]), float.Parse(splitData[3]), float.Parse(splitData[4]));
+                            SpawnPlayer(splitData[1], int.Parse(splitData[2]), int.Parse(splitData[3]), int.Parse(splitData[4]));
                             break;
 
                         case "DC":
@@ -121,11 +124,16 @@ public class Client : MonoBehaviour {
             // Get player positions
             if (Time.time - lastMovementUpdate > movementUpdateRate)
             {
-                // Resetv time check frame
+                // Reset time check frame
                 lastMovementUpdate = Time.time;
 
+                // Compress position data
+                Vector2 pos;
+                pos.x = CompressPosFloat(myPlayer.transform.position.x);
+                pos.y = CompressPosFloat(myPlayer.transform.position.y);
+
                 // Put together message to set and request locations
-                string msg = "SENDPLYPOS|" + myClientId + '|' + myPlayer.transform.position.x + '|' + myPlayer.transform.position.y;
+                string msg = "SENDPLYPOS|" + myClientId + '|' + pos.x + '|' + pos.y;
 
                 // Send out my position
                 Send(msg, reliableChannel);
@@ -193,19 +201,21 @@ public class Client : MonoBehaviour {
         for(int i = 3; i < data.Length -1; i++)
         {
             string[] d = data[i].Split('%');
-            SpawnPlayer(d[0], int.Parse(d[1]), float.Parse(d[2]), float.Parse(d[3]));
+            SpawnPlayer(d[0], int.Parse(d[1]), int.Parse(d[2]), int.Parse(d[3]));
         }
     }
 
     // Spawn in players
-    private void SpawnPlayer(string playerName, int cnnId, float x, float y)
+    private void SpawnPlayer(string playerName, int cnnId, int x, int y)
     {
         // Spawn player object
         Debug.Log("Spawn player " + cnnId);
         GameObject go = Instantiate(playerPrefab) as GameObject;
 
         // Set player object position
-        Vector3 position = new Vector3(x, y, 0);
+        Vector3 position = Vector3.zero;
+        position.x = DecompressPosFloat(x);
+        position.y = DecompressPosFloat(y);
         go.transform.position = position;
 
         // If player is me, give them a controller so I can move them
@@ -231,8 +241,8 @@ public class Client : MonoBehaviour {
         {
             // Parsing position data from message
             Vector3 position = Vector3.zero;
-            position.x = float.Parse(data[2]);
-            position.y = float.Parse(data[3]);
+            position.x = DecompressPosFloat(int.Parse(data[2]));
+            position.y = DecompressPosFloat(int.Parse(data[3]));
 
             // Set given player's position to parsed position
             players[int.Parse(data[1])].avatar.transform.position = position;
@@ -250,5 +260,18 @@ public class Client : MonoBehaviour {
     public void GetHedgeHogs(string msg, float sentTime)
     {
         spawner.UpdateHogs(msg, sentTime);
+    }
+
+
+    // Compress position data
+    private int CompressPosFloat(float x)
+    {
+        return (int)(x * compressionVal);
+    }
+
+    // Decompress position data
+    private float DecompressPosFloat(int x)
+    {
+        return (float)x / compressionVal;
     }
 }
