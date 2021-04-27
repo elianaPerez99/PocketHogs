@@ -7,9 +7,9 @@ public class HedgeHog : MonoBehaviour
     //variables
     public int id;
     public Vector3 newPosition;
-    void Update()
+    void FixedUpdate()
     {
-        transform.position = new Vector3(Mathf.Lerp(transform.position.x, newPosition.x, .75f), Mathf.Lerp(transform.position.y, newPosition.y, .75f),0);
+        transform.position = new Vector3(Mathf.Lerp(transform.position.x, newPosition.x, .1f), Mathf.Lerp(transform.position.y, newPosition.y, .1f),0);
     }
     public void Destroy()
     {

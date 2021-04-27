@@ -76,6 +76,7 @@ public class ServerHedgeHogs : MonoBehaviour {
         GetComponent<Rigidbody2D>().velocity = diff;
         data.position = transform.position;
     }
+
     private void ChangeTarget()
     {
         targetLocation = new Vector3(Random.Range(spawnMin.x, spawnMax.x), Random.Range(spawnMin.y, spawnMax.y), 0);
@@ -88,5 +89,25 @@ public class ServerHedgeHogs : MonoBehaviour {
         {
             ChangeTarget();
         }
+    }
+
+    //Fleeing Functions
+    private void FleeTargetPosition(Vector3 playerPos)
+    {
+        
+    }
+    private void Fleeing()
+    {
+        Vector3 diff = targetLocation - transform.position;
+        //velocity stuff
+        if (diff.magnitude < 2)
+        {
+            ChangeState(States.Wandering);
+        }
+        diff = new Vector2(diff.normalized.x, diff.normalized.y);
+        diff *= baseSpeed;
+        data.velocity = diff;
+        GetComponent<Rigidbody2D>().velocity = diff;
+        data.position = transform.position;
     }
 }
