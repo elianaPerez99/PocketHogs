@@ -122,10 +122,11 @@ public class Client : MonoBehaviour {
             GameObject myPlayer = players[myClientId].avatar;
 
             // Get player positions
-            if (Time.time - lastMovementUpdate > movementUpdateRate)
+            if (myPlayer.GetComponent<PlayerMovement>().HasMoved() && (Time.time - lastMovementUpdate > movementUpdateRate))
             {
                 // Reset time check frame
                 lastMovementUpdate = Time.time;
+                myPlayer.GetComponent<PlayerMovement>().SetLastPos();
 
                 // Compress position data
                 Vector2 pos;
@@ -218,11 +219,12 @@ public class Client : MonoBehaviour {
         position.y = DecompressPosFloat(y);
         go.transform.position = position;
 
-        // If player is me, give them a controller so I can move them
+        // If player is me, give them a controller so I can move them and give them hog pockets to own hogs
         if(cnnId == myClientId)
         {
             go.GetComponent<Rigidbody>().isKinematic = false;
             go.AddComponent<PlayerMovement>();
+            go.AddComponent<HogPockets>();
             isStarted = true;
         }
 

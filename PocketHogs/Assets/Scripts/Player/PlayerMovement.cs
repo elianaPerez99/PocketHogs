@@ -16,6 +16,8 @@ public class PlayerMovement : MonoBehaviour
 	// Check if moved
 	private Vector3 lastPos;
 
+	// Food information
+	public GameObject foodPrefab;
 
 	private void Start()
 	{
@@ -29,12 +31,31 @@ public class PlayerMovement : MonoBehaviour
 	// Update is called once per frame
 	void Update ()
 	{
+		GetInput();
+		CameraFollow();
+	}
+
+	// Get player inputs
+	private void GetInput()
+	{
+		// Input for walking
 		float xMove = Input.GetAxis("Horizontal") * speed;
 		float yMove = Input.GetAxis("Vertical") * speed;
 
 		rb.velocity = new Vector3(xMove, yMove, 0);
 
-		CameraFollow();
+		// Add input for dropping food
+		if(Input.GetKeyDown(KeyCode.F))
+		{
+			//DropFood();
+		}
+	}
+
+	// Player drops food nearby for hedgehogs
+	private void DropFood()
+	{
+		GameObject food = Instantiate(foodPrefab) as GameObject;
+		food.transform.position = transform.position;
 	}
 
 	// Make camera follow moveable player
