@@ -25,7 +25,7 @@ public class ServerSpawner:MonoBehaviour
 
     public ServerSpawner()
     {
-        maxHogsPer = 6;
+        maxHogsPer = 3;
         minHogsPer = 1;
         currentMax = 1;
         nextID = 0;

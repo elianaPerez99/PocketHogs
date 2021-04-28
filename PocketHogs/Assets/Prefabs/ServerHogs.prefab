@@ -22,6 +22,7 @@ GameObject:
   - component: {fileID: 114877811514871568}
   - component: {fileID: 61784712279918434}
   - component: {fileID: 50600953092555830}
+  - component: {fileID: 70571126189059090}
   m_Layer: 0
   m_Name: ServerHogs
   m_TagString: Untagged
@@ -36,7 +37,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1390073695684434}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 978.527, y: -55.58622, z: -9.5}
+  m_LocalPosition: {x: 3.3290386, y: 12.594915, z: -9.5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -87,6 +88,21 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 1, y: 0.82936096}
   m_EdgeRadius: 0
+--- !u!70 &70571126189059090
+CapsuleCollider2D:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1390073695684434}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: -0.0057821274, y: -0.49516487}
+  m_Size: {x: 9.309786, y: 9.309786}
+  m_Direction: 0
 --- !u!114 &114877811514871568
 MonoBehaviour:
   m_ObjectHideFlags: 1

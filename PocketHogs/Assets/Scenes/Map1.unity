@@ -216,10 +216,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hhPrefab: {fileID: 1750454014852108, guid: a5c64b6149f3fdd48b1e56f755dac06c, type: 2}
-  maxHogsPer: 6
-  minHogsPer: 12
-  spawnMin: {x: -7.4, y: -4}
-  spawnMax: {x: 7.4, y: 4}
 --- !u!1 &806464270
 GameObject:
   m_ObjectHideFlags: 0

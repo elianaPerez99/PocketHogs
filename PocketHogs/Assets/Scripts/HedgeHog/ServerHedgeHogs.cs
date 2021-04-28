@@ -16,7 +16,7 @@ public class ServerHedgeHogs : MonoBehaviour {
 
     //for multiple states
     private Vector3 targetLocation;
-    public float baseSpeed = .5f;
+    public float baseSpeed = .25f;
     public hhData data;
     private float lastTime = 0f;
 
@@ -85,10 +85,16 @@ public class ServerHedgeHogs : MonoBehaviour {
 
     void OnCollisionStay2D(Collision2D collision)
     {
-        if (!collision.gameObject.CompareTag("Player"))
+        if (!collision.gameObject.CompareTag("Player")  && !collision.gameObject.CompareTag("Food"))
         {
             ChangeTarget();
         }
+    }
+
+    void OnTriggerEnter(Collision2D collision)
+    {
+        ChangeState(States.SeekFood);
+        SeekTargetPosition(collision.gameObject.transform.position);
     }
 
     //Fleeing Functions
@@ -97,6 +103,27 @@ public class ServerHedgeHogs : MonoBehaviour {
         
     }
     private void Fleeing()
+    {
+        Vector3 diff = targetLocation - transform.position;
+        //velocity stuff
+        if (diff.magnitude < 2)
+        {
+            ChangeState(States.Wandering);
+        }
+        diff = new Vector2(diff.normalized.x, diff.normalized.y);
+        diff *= baseSpeed;
+        data.velocity = diff;
+        GetComponent<Rigidbody2D>().velocity = diff;
+        data.position = transform.position;
+    }
+
+    //seeking functions
+    private void SeekTargetPosition(Vector3 foodPos)
+    {
+        targetLocation = foodPos;
+    }
+
+    private void Seeking()
     {
         Vector3 diff = targetLocation - transform.position;
         //velocity stuff
