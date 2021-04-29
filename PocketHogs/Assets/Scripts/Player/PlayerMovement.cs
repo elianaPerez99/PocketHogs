@@ -47,7 +47,7 @@ public class PlayerMovement : MonoBehaviour
 		// Add input for dropping food
 		if(Input.GetKeyDown(KeyCode.F))
 		{
-			//DropFood();
+			DropFood();
 		}
 	}
 

@@ -219,13 +219,17 @@ public class Client : MonoBehaviour {
         position.y = DecompressPosFloat(y);
         go.transform.position = position;
 
-        // If player is me, give them a controller so I can move them and give them hog pockets to own hogs
+        // If player is me, let me be moveable and have hog pockets
         if(cnnId == myClientId)
         {
             go.GetComponent<Rigidbody>().isKinematic = false;
-            go.AddComponent<PlayerMovement>();
             go.AddComponent<HogPockets>();
             isStarted = true;
+        }
+        // If no me, remove the movement controller
+        else
+        {
+            Destroy(go.GetComponent<PlayerMovement>());
         }
 
         // Create new player data to add to the player dictionary
