@@ -13,7 +13,7 @@ public class HedgeHog : MonoBehaviour
     }
     public void Destroy()
     {
-        GameObject.Destroy(this);
+        Destroy(this.gameObject);
     }
 
 

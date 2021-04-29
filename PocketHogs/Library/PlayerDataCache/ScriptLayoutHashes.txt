@@ -121,6 +121,7 @@ bc68edb0af574bf79f9550ead8ebae5c UnityEngine.HoloLens.dll:UnityEngine.Audio.Audi
 c2275a8bfbb9f9942cad75ecdfded41d UnityEngine.HoloLens.dll:UnityEngine.XR.WSA.SpatialMappingCollider
 45f3431f0103c41611e8d4eec3d439df UnityEngine.HoloLens.dll:UnityEngine.XR.WSA.SpatialMappingRenderer
 226321f0d6fa164355cc843991788117 Assembly-CSharp.dll:.ServerScript
+05524b8f659e7bfe5756d1335fec24ba Assembly-CSharp.dll:.HogCatcher
 4d099ea6561ec66a6788900eed8528a5 Assembly-CSharp.dll:.Wandering
 fc1e0f4d8439d9928083474691511a13 UnityEngine.Networking.dll:UnityEngine.Networking.NetworkAnimator
 05524b8f659e7bfe5756d1335fec24ba UnityEngine.Networking.dll:UnityEngine.Networking.NetworkBehaviour
@@ -156,4 +157,3 @@ c2275a8bfbb9f9942cad75ecdfded41d UnityEngine.HoloLens.dll:UnityEngine.XR.WSA.Spa
 9de3a22eca9aefadba2d10d5987cefe3 UnityEngine.SpatialTracking.dll:UnityEngine.SpatialTracking.TrackedPoseDriver
 b996e1b0b6dfc6b976261c6feb43dc93 Assembly-CSharp.dll:.ServerHedgeHogs
 7e4169d7e63666cca3753fb247321bbf Assembly-CSharp.dll:.HedgeHog
-05524b8f659e7bfe5756d1335fec24ba Assembly-CSharp.dll:.HogCatcher

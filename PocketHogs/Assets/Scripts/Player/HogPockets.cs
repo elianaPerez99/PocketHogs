@@ -44,6 +44,8 @@ public class HogPockets : MonoBehaviour
         int randNum = Random.Range(0, names.Length - 1);
         hoggyBoi.name = names[randNum];
         hogPockets[pocket] = hoggyBoi;
+
+        Debug.Log("Obtained the boi " + hogPockets[pocket].name);
     }
 
     // Removes hog from inventory
