@@ -81,6 +81,10 @@ public class ServerScript : MonoBehaviour
                         Send(msg, reliableChannel, clients);
                         break;
 
+                    case "FOODDROP":
+                        Send(msg, reliableChannel, clients);
+                        break;
+
                     default:
                         Debug.Log("Invalid message: " + msg);
                         break;

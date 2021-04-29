@@ -49,6 +49,9 @@ public class Client : MonoBehaviour {
     // Value for position value compression
     private float compressionVal = 100;
 
+    // Food for food spawning
+    public GameObject foodPrefab;
+
     private void Awake()
     {
         DontDestroyOnLoad(this.gameObject);
@@ -99,6 +102,11 @@ public class Client : MonoBehaviour {
                         case "SENDPLYPOS":
                             OnSendPlayerPosition(splitData);
                             break;
+
+                        case "FOODDROP":
+                            SpawnFood(int.Parse(splitData[1]), int.Parse(splitData[2]));
+                            break;
+
                         case "HH":
                             if (hasSpawner)
                             {
@@ -192,6 +200,12 @@ public class Client : MonoBehaviour {
         NetworkTransport.Send(hostID, connectionID, channelId, msg, message.Length * sizeof(char), out error);
     }
 
+    public void Send(string message)
+    {
+        byte[] msg = Encoding.Unicode.GetBytes(message);
+        NetworkTransport.Send(hostID, connectionID, reliableChannel, msg, message.Length * sizeof(char), out error);
+    }
+
     // Need to spawn in players on join
     private void OnJoin(string[] data)
     {
@@ -223,13 +237,15 @@ public class Client : MonoBehaviour {
         if(cnnId == myClientId)
         {
             go.GetComponent<Rigidbody>().isKinematic = false;
+            go.AddComponent<PlayerMovement>();
             go.AddComponent<HogPockets>();
             isStarted = true;
+
+            go.GetComponent<PlayerMovement>().client = this.gameObject;
         }
-        // If no me, remove the movement controller
+        // If no me, don't let do player controlled things
         else
         {
-            Destroy(go.GetComponent<PlayerMovement>());
             Destroy(go.GetComponentInChildren<HogCatcher>());
         }
 
@@ -238,6 +254,20 @@ public class Client : MonoBehaviour {
         p.avatar = go;
         p.playerName = playerName;
         players.Add(cnnId,p);
+    }
+
+    // Spawns food drops from other players
+    private void SpawnFood(int x, int y)
+    {
+        // Spawn player object
+        Debug.Log("Spawn food");
+        GameObject foob = Instantiate(foodPrefab) as GameObject;
+
+        // Set food object position
+        Vector3 position = Vector3.zero;
+        position.x = DecompressPosFloat(x);
+        position.y = DecompressPosFloat(y);
+        foob.transform.position = position;
     }
 
     // Set position of players and send my own
@@ -271,13 +301,13 @@ public class Client : MonoBehaviour {
 
 
     // Compress position data
-    private int CompressPosFloat(float x)
+    public int CompressPosFloat(float x)
     {
         return (int)(x * compressionVal);
     }
 
     // Decompress position data
-    private float DecompressPosFloat(int x)
+    public float DecompressPosFloat(int x)
     {
         return (float)x / compressionVal;
     }

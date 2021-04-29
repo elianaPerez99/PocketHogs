@@ -380,6 +380,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerPrefab: {fileID: 1854442626390314, guid: d715dd5b4c72d634eafda2f9fdd1f703,
     type: 2}
+  foodPrefab: {fileID: 1310878259691358, guid: 3387d022e1744e344ba4fa4c05affc0f, type: 2}
 --- !u!1 &1393509044
 GameObject:
   m_ObjectHideFlags: 0

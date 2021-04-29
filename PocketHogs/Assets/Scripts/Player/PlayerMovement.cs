@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Networking;
 
 public class PlayerMovement : MonoBehaviour
 {
@@ -16,8 +17,8 @@ public class PlayerMovement : MonoBehaviour
 	// Check if moved
 	private Vector3 lastPos;
 
-	// Food information
-	public GameObject foodPrefab;
+	// For sending the food message
+	public GameObject client;
 
 	private void Start()
 	{
@@ -54,8 +55,8 @@ public class PlayerMovement : MonoBehaviour
 	// Player drops food nearby for hedgehogs
 	private void DropFood()
 	{
-		GameObject food = Instantiate(foodPrefab) as GameObject;
-		food.transform.position = transform.position;
+		string msg = "FOODDROP|" + client.GetComponent<Client>().CompressPosFloat(transform.position.x) + "|" + client.GetComponent<Client>().CompressPosFloat(transform.position.y);
+		client.GetComponent<Client>().Send(msg);
 	}
 
 	// Make camera follow moveable player
