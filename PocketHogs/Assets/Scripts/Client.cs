@@ -230,6 +230,7 @@ public class Client : MonoBehaviour {
         else
         {
             Destroy(go.GetComponent<PlayerMovement>());
+            Destroy(go.GetComponentInChildren<HogCatcher>());
         }
 
         // Create new player data to add to the player dictionary
