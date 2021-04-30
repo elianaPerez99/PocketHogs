@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Food
   - Hog
+  - SHog
   layers:
   - Default
   - TransparentFX

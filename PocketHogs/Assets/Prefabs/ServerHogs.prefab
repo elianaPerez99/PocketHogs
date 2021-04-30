@@ -25,7 +25,7 @@ GameObject:
   - component: {fileID: 70571126189059090}
   m_Layer: 0
   m_Name: ServerHogs
-  m_TagString: Untagged
+  m_TagString: SHog
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -57,7 +57,7 @@ Rigidbody2D:
   m_Mass: 1
   m_LinearDrag: 0
   m_AngularDrag: 0.05
-  m_GravityScale: 1
+  m_GravityScale: 0
   m_Material: {fileID: 0}
   m_Interpolate: 0
   m_SleepingMode: 1
@@ -114,6 +114,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2833927f00b05b144b9766097ce245b9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  baseSpeed: 5
+  baseSpeed: 1
   spawnMin: {x: 0, y: 0}
   spawnMax: {x: 0, y: 0}

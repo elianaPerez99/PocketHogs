@@ -142,6 +142,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hhSpawner: {fileID: 546272039}
+  foodPrefab: {fileID: 1310878259691358, guid: 3387d022e1744e344ba4fa4c05affc0f, type: 2}
 --- !u!4 &546272038
 Transform:
   m_ObjectHideFlags: 0

@@ -16,7 +16,7 @@ public class ServerHedgeHogs : MonoBehaviour {
 
     //for multiple states
     private Vector3 targetLocation;
-    public float baseSpeed = .25f;
+    public float baseSpeed = .02f;
     public hhData data;
     private float lastTime = 0f;
 
@@ -42,7 +42,7 @@ public class ServerHedgeHogs : MonoBehaviour {
                 Wander();
                 break;
             case States.SeekFood:
-                //put seekfood here
+                Seeking();
                 break;
             case States.Fleeing:
                 //put fleeing here
@@ -85,18 +85,30 @@ public class ServerHedgeHogs : MonoBehaviour {
 
     void OnCollisionStay2D(Collision2D collision)
     {
-        if (!collision.gameObject.CompareTag("Player")  && !collision.gameObject.CompareTag("Food"))
+        if (!collision.gameObject.CompareTag("Player")  && !collision.gameObject.CompareTag("Food") && currentState == States.Wandering)
         {
             ChangeTarget();
         }
     }
 
-    void OnTriggerEnter(Collision2D collision)
+    void OnTriggerEnter2D(Collider2D col)
     {
-        ChangeState(States.SeekFood);
-        SeekTargetPosition(collision.gameObject.transform.position);
+        if (col.gameObject.CompareTag("Food"))
+        {
+            ChangeState(States.SeekFood);
+            SeekTargetPosition(col.gameObject.transform.position);
+        }
+        
     }
 
+    void OnTriggerExit2D(Collider2D col)
+    {
+        if (col.gameObject.CompareTag("Food"))
+        {
+            ChangeState(States.Wandering);
+            ChangeTarget();
+        }
+    }
     //Fleeing Functions
     private void FleeTargetPosition(Vector3 playerPos)
     {
@@ -127,12 +139,15 @@ public class ServerHedgeHogs : MonoBehaviour {
     {
         Vector3 diff = targetLocation - transform.position;
         //velocity stuff
-        if (diff.magnitude < 2)
+        if (!(diff.magnitude < 1))
         {
-            ChangeState(States.Wandering);
+            diff = new Vector2(diff.normalized.x, diff.normalized.y);
+            diff *= baseSpeed;     
         }
-        diff = new Vector2(diff.normalized.x, diff.normalized.y);
-        diff *= baseSpeed;
+        else
+        {
+            diff = new Vector3(0f, 0f,0f);
+        }
         data.velocity = diff;
         GetComponent<Rigidbody2D>().velocity = diff;
         data.position = transform.position;

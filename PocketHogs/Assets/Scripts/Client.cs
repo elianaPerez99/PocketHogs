@@ -259,7 +259,6 @@ public class Client : MonoBehaviour {
     // Spawns food drops from other players
     private void SpawnFood(int x, int y)
     {
-        // Spawn player object
         Debug.Log("Spawn food");
         GameObject foob = Instantiate(foodPrefab) as GameObject;
 
@@ -268,6 +267,8 @@ public class Client : MonoBehaviour {
         position.x = DecompressPosFloat(x);
         position.y = DecompressPosFloat(y);
         foob.transform.position = position;
+
+        //set id
     }
 
     // Set position of players and send my own

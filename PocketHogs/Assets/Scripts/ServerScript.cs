@@ -35,6 +35,9 @@ public class ServerScript : MonoBehaviour
     // Value for position value compression
     private float compressionVal = 100;
 
+    // Food for food spawning
+    public GameObject foodPrefab;
+
     private void Start()
     {
         NetworkTransport.Init();
@@ -83,6 +86,7 @@ public class ServerScript : MonoBehaviour
 
                     case "FOODDROP":
                         Send(msg, reliableChannel, clients);
+                        SpawnFood(int.Parse(splitData[1]), int.Parse(splitData[2]));
                         break;
 
                     default:
@@ -205,5 +209,17 @@ public class ServerScript : MonoBehaviour
     private float DecompressPosFloat(int x)
     {
         return (float)x / compressionVal;
+    }
+
+    // Spawns food drops from other players
+    private void SpawnFood(int x, int y)
+    {
+        GameObject foob = Instantiate(foodPrefab) as GameObject;
+
+        // Set food object position
+        Vector3 position = Vector3.zero;
+        position.x = DecompressPosFloat(x);
+        position.y = DecompressPosFloat(y);
+        foob.transform.position = position;
     }
 }
