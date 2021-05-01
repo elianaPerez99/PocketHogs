@@ -71,7 +71,7 @@ public class ServerScript : MonoBehaviour
         {
             case NetworkEventType.Nothing:
                 
-                SendHHData(channelId);
+                //SendHHData(channelId);
                 break;
             case NetworkEventType.ConnectEvent:
                 Debug.Log("Player " + connectionId + " has connected");
@@ -115,6 +115,7 @@ public class ServerScript : MonoBehaviour
                 break;
         }
 
+        SendHHData(channelId);
     }
 
     private void OnConnection(int cnnID)

@@ -42,6 +42,7 @@ public class ServerSpawner:MonoBehaviour
         {
             currentNumClients = clients;
             currentMax = (int)Random.Range(minHogsPer, maxHogsPer) * currentNumClients;
+
             while (currentAmount < currentMax)
             {
                 var position = new Vector3(Random.Range(spawnMin.x, spawnMax.x), Random.Range(spawnMin.y, spawnMax.y), 0);
@@ -88,8 +89,11 @@ public class ServerSpawner:MonoBehaviour
                 currentAmount--;
                 hedgeHogCalculations.Remove(go);
                 Destroy(go);
+
+                break;
             }
         }
+
         SpawnHedgeHogs(currentNumClients);
     }
 
