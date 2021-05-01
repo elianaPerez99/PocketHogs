@@ -31,11 +31,6 @@ public class HogPockets : MonoBehaviour
                 pocketUI.pocketSpaces[i].GetComponentsInChildren<Image>()[1].color = new Color(1.0f, 1.0f, 1.0f, 1.0f);
                 pocketUI.pocketSpaces[i].GetComponentInChildren<Text>().text = hogPockets[i].name;
             }
-            else 
-            {
-                pocketUI.pocketSpaces[i].GetComponentsInChildren<Image>()[1].color = new Color(1.0f, 1.0f, 1.0f, 0.0f);
-                pocketUI.pocketSpaces[i].GetComponentInChildren<Text>().text = "";
-            }
         }
     }
     // Look for a free pocket
