@@ -51,7 +51,12 @@ public class Client : MonoBehaviour {
 
     // Food for food spawning
     public GameObject foodPrefab;
+    List<FoodHealth> foodList;
 
+    private void Start()
+    {
+        foodList = new List<FoodHealth>();
+    }
     private void Awake()
     {
         DontDestroyOnLoad(this.gameObject);
@@ -104,7 +109,16 @@ public class Client : MonoBehaviour {
                             break;
 
                         case "FOODDROP":
-                            SpawnFood(int.Parse(splitData[1]), int.Parse(splitData[2]));
+                            foodList.Add(SpawnFood(int.Parse(splitData[1]), int.Parse(splitData[2]), int.Parse(splitData[3])));
+                            break;
+                        case "FOODGONE":
+                            foreach(FoodHealth fd in foodList)
+                            {
+                                if (int.Parse(splitData[1]) == fd.GetId())
+                                {
+                                    fd.DestoryClient();
+                                }
+                            }
                             break;
 
                         case "HH":
@@ -257,7 +271,7 @@ public class Client : MonoBehaviour {
     }
 
     // Spawns food drops from other players
-    private void SpawnFood(int x, int y)
+    private FoodHealth SpawnFood(int x, int y, int id)
     {
         Debug.Log("Spawn food");
         GameObject foob = Instantiate(foodPrefab) as GameObject;
@@ -269,6 +283,9 @@ public class Client : MonoBehaviour {
         foob.transform.position = position;
 
         //set id
+        foob.GetComponent<FoodHealth>().SetId(id);
+
+        return foob.GetComponent<FoodHealth>();
     }
 
     // Set position of players and send my own
@@ -312,4 +329,5 @@ public class Client : MonoBehaviour {
     {
         return (float)x / compressionVal;
     }
+
 }

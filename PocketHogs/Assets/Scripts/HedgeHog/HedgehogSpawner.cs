@@ -7,6 +7,8 @@ public class HedgehogSpawner : MonoBehaviour {
 	//variables
 	public GameObject hhPrefab;
 	private float lastSentTime = 0f;
+	// Value for position value compression
+	private float compressionVal = 100;
 	//functions
 
 	private List<hhData> GetNewDataFromServer(string msg)
@@ -20,14 +22,11 @@ public class HedgehogSpawner : MonoBehaviour {
 			hhData tempD;
 			tempD.id = int.Parse(tempStrArray[0]);
 			//getting position
-			string[] temp = tempStrArray[1].Substring(1, tempStrArray[1].Length - 2).Split(',');
-			tempD.position = new Vector3(float.Parse(temp[0]), float.Parse(temp[1]), float.Parse(temp[2]));
+			tempD.position = new Vector3(DecompressPosFloat(int.Parse(tempStrArray[1])), DecompressPosFloat(int.Parse(tempStrArray[2])), 0);
 			//getting rotation
-			temp = tempStrArray[2].Substring(1, tempStrArray[2].Length - 2).Split(',');
-			tempD.rotation = new Vector3(float.Parse(temp[0]), float.Parse(temp[1]), float.Parse(temp[2]));
+			tempD.rotation = new Vector3(DecompressPosFloat(int.Parse(tempStrArray[3])), DecompressPosFloat(int.Parse(tempStrArray[4])), 0);
 			//getting velocity
-			temp = tempStrArray[3].Substring(1, tempStrArray[3].Length - 2).Split(',');
-			tempD.velocity = new Vector3(float.Parse(temp[0]), float.Parse(temp[1]), float.Parse(temp[2]));
+			tempD.velocity = new Vector3(DecompressPosFloat(int.Parse(tempStrArray[5])), DecompressPosFloat(int.Parse(tempStrArray[6])), 0);
 
 			hedgeHogDataList.Add(tempD);
 		}
@@ -65,5 +64,9 @@ public class HedgehogSpawner : MonoBehaviour {
 		}
 		lastSentTime = sentTime;
 	}
-
+	// Decompress position data
+	private float DecompressPosFloat(int x)
+	{
+		return (float)x / compressionVal;
+	}
 }

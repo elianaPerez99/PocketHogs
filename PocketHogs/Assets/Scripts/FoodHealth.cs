@@ -8,7 +8,7 @@ public class FoodHealth : MonoBehaviour {
 	private bool nearHog = false;
 	private bool eating = false;
 	private int hogsNear = 0;
-
+	private GameObject server;
 	void Update()
 	{
 		if (nearHog && !eating)
@@ -55,9 +55,14 @@ public class FoodHealth : MonoBehaviour {
 
 	private void Destroy()
     {
-		//SEND HAS DESTROYED SOMEHOW TO THE SERVER SO THE PLAYERS KNOW
+		server.GetComponent<ServerScript>().FoodEaten(id);
 		GameObject.Destroy(gameObject);
     }
+
+	public void DestoryClient()
+	{
+		GameObject.Destroy(gameObject);
+	}
 
 	public void SetId(int newId)
 	{
@@ -67,5 +72,10 @@ public class FoodHealth : MonoBehaviour {
 	public int GetId()
 	{
 		return id;
+	}
+
+	public void SetServer(GameObject srv)
+	{
+		server = srv;
 	}
 }

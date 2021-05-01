@@ -16,6 +16,8 @@ public class ServerScript : MonoBehaviour
 {
     //networking stuff
     private List<ServerClient> clients = new List<ServerClient>();
+    private List<FoodHealth> food;
+    private int foodIds = 0;
 
     private const int MAX_CONNECTION = 6;
     private int port = 5701;
@@ -50,6 +52,7 @@ public class ServerScript : MonoBehaviour
 
         hostID = NetworkTransport.AddHost(topop, port, null);
         webHostId = NetworkTransport.AddWebsocketHost(topop, port, null);
+        food = new List<FoodHealth>();
         isStarted = true;
     }
 
@@ -85,10 +88,13 @@ public class ServerScript : MonoBehaviour
                         break;
 
                     case "FOODDROP":
+                        FoodHealth fd = SpawnFood(int.Parse(splitData[1]), int.Parse(splitData[2]));
+                        fd.SetId(foodIds);
+                        food.Add(fd);
+                        msg += '|' + fd.GetId().ToString();
+                        foodIds++;
                         Send(msg, reliableChannel, clients);
-                        SpawnFood(int.Parse(splitData[1]), int.Parse(splitData[2]));
                         break;
-
                     default:
                         Debug.Log("Invalid message: " + msg);
                         break;
@@ -191,7 +197,9 @@ public class ServerScript : MonoBehaviour
         {
             foreach (hhData hh in hhSpawner.GetList())
             {
-                msg += hh.id.ToString() + "~" + hh.position.ToString() + "~" + hh.rotation.ToString() + "~" + hh.velocity.ToString() + "`";
+                msg += hh.id.ToString() + "~" + CompressPosFloat(hh.position.x).ToString() + '~' + CompressPosFloat(hh.position.y).ToString() + '~'
+                    + CompressPosFloat(hh.rotation.x).ToString() + '~' + CompressPosFloat(hh.rotation.y).ToString() + '~'+
+                    CompressPosFloat(hh.velocity.x).ToString() + '~' + CompressPosFloat(hh.velocity.y).ToString() + "`";
             }
             msg = msg.Trim('`');
         }
@@ -212,7 +220,7 @@ public class ServerScript : MonoBehaviour
     }
 
     // Spawns food drops from other players
-    private void SpawnFood(int x, int y)
+    private FoodHealth SpawnFood(int x, int y)
     {
         GameObject foob = Instantiate(foodPrefab) as GameObject;
 
@@ -221,5 +229,13 @@ public class ServerScript : MonoBehaviour
         position.x = DecompressPosFloat(x);
         position.y = DecompressPosFloat(y);
         foob.transform.position = position;
+        foob.GetComponent<FoodHealth>().SetServer(gameObject);
+        return foob.GetComponent<FoodHealth>();
+    }
+
+    public void FoodEaten(int id)
+    {
+        string msg = "FOODGONE|" + id.ToString();
+        Send(msg, reliableChannel, clients);
     }
 }
