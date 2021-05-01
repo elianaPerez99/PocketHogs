@@ -2,6 +2,7 @@ WindowsStandalone
 PlayerPath?
 C:/Users/Eliana School/Desktop/Testing/test.exe
 SceneListBegin?
+Assets/Scenes/Server.unity
 Assets/Scenes/ClientStartMenu.unity
 Assets/Scenes/Map1.unity
 SceneListEnd?

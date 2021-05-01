@@ -317,6 +317,12 @@ public class Client : MonoBehaviour {
         spawner.UpdateHogs(msg, sentTime);
     }
 
+    //destroy a boi :(
+    public void SendDestructionOfBoi(int id)
+    {
+        string msg = "BOIDOWN|" + id.ToString();
+        Send(msg);
+    }
 
     // Compress position data
     public int CompressPosFloat(float x)

@@ -25,9 +25,9 @@ public class ServerSpawner:MonoBehaviour
 
     public ServerSpawner()
     {
-        maxHogsPer = 3;
-        minHogsPer = 1;
-        currentMax = 1;
+        maxHogsPer = 4;
+        minHogsPer = 2;
+        currentMax = 4;
         nextID = 0;
         currentAmount = 0;
         currentNumClients = 0;
@@ -58,6 +58,39 @@ public class ServerSpawner:MonoBehaviour
                 nextID++;
             }
         }
+        else if (currentAmount < minHogsPer*clients || currentAmount == 0)
+        {
+            currentNumClients = clients;
+            while (currentAmount < currentMax)
+            {
+                var position = new Vector3(Random.Range(spawnMin.x, spawnMax.x), Random.Range(spawnMin.y, spawnMax.y), 0);
+                hhData temp = new hhData();
+                temp.position = position;
+                temp.rotation = new Vector3(0, 0, 0);
+                temp.velocity = new Vector3(0, 0, 0);
+                temp.id = nextID;
+                GameObject tempObj = Instantiate(hhprefab, temp.position, Quaternion.Euler(temp.rotation), transform);
+                tempObj.GetComponent<ServerHedgeHogs>().data = temp;
+                hedgeHogCalculations.Add(tempObj);
+
+                currentAmount++;
+                nextID++;
+            }
+        }
+    }
+
+    public void DeleteBoi(int id)
+    {
+        foreach (GameObject go in hedgeHogCalculations)
+        {
+            if (go.GetComponent<ServerHedgeHogs>().data.id == id)
+            {
+                currentAmount--;
+                hedgeHogCalculations.Remove(go);
+                Destroy(go);
+            }
+        }
+        SpawnHedgeHogs(currentNumClients);
     }
 
     public List<hhData> GetList()

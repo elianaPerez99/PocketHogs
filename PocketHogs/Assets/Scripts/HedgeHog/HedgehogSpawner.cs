@@ -22,11 +22,11 @@ public class HedgehogSpawner : MonoBehaviour {
 			hhData tempD;
 			tempD.id = int.Parse(tempStrArray[0]);
 			//getting position
-			tempD.position = new Vector3(DecompressPosFloat(int.Parse(tempStrArray[1])), DecompressPosFloat(int.Parse(tempStrArray[2])), 0);
+			tempD.position = new Vector3(DecompressPosFloat(int.Parse(tempStrArray[1])), DecompressPosFloat(int.Parse(tempStrArray[2])), 0f);
 			//getting rotation
-			tempD.rotation = new Vector3(DecompressPosFloat(int.Parse(tempStrArray[3])), DecompressPosFloat(int.Parse(tempStrArray[4])), 0);
+			tempD.rotation = new Vector3(DecompressPosFloat(int.Parse(tempStrArray[3])), DecompressPosFloat(int.Parse(tempStrArray[4])), 0f);
 			//getting velocity
-			tempD.velocity = new Vector3(DecompressPosFloat(int.Parse(tempStrArray[5])), DecompressPosFloat(int.Parse(tempStrArray[6])), 0);
+			tempD.velocity = new Vector3(DecompressPosFloat(int.Parse(tempStrArray[5])), DecompressPosFloat(int.Parse(tempStrArray[6])), 0f);
 
 			hedgeHogDataList.Add(tempD);
 		}
@@ -50,18 +50,38 @@ public class HedgehogSpawner : MonoBehaviour {
 					//move this to an update function that deals with smoothness
 					//hog.gameObject.transform.position = h.position;
 					hog.newPosition = h.position;
-					hog.gameObject.transform.rotation = Quaternion.Euler(h.rotation.x, h.rotation.y, h.rotation.z);
+					hog.gameObject.transform.rotation = Quaternion.Euler(h.rotation.x, h.rotation.y, 0);
 					hog.gameObject.GetComponent<Rigidbody2D>().velocity = h.velocity;
 				}
 			}
 			if (!exists)
 			{
-				GameObject newHoggie = Instantiate(hhPrefab, h.position, Quaternion.Euler(h.rotation.x, h.rotation.y, h.rotation.z),transform);
+				GameObject newHoggie = Instantiate(hhPrefab, new Vector3(h.position.x,h.position.y,0), Quaternion.Euler(h.rotation.x, h.rotation.y, 0),transform);
 				newHoggie.GetComponent<HedgeHog>().id = h.id;
 				newHoggie.GetComponent<HedgeHog>().newPosition = h.position;
 			}
-
 		}
+
+		if (hogs.Length > list.Count)
+		{
+			for (int i = 0; i < hogs.Length; i++)
+			{
+				bool exists = false;
+				foreach (hhData h in list)
+				{
+					if (h.id == hogs[i].id)
+					{
+						exists = true;
+					}
+				}
+				if (!exists)
+				{
+					hogs[i].Destroy();
+				}
+			}
+		}
+		
+
 		lastSentTime = sentTime;
 	}
 	// Decompress position data

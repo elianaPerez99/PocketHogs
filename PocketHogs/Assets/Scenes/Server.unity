@@ -168,8 +168,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hhprefab: {fileID: 1390073695684434, guid: c96d239359862f24db6fe8cf6e28d0e4, type: 2}
-  maxHogsPer: 6
-  minHogsPer: 1
+  maxHogsPer: 4
+  minHogsPer: 2
   spawnMin: {x: -7.4, y: -4}
   spawnMax: {x: 7.4, y: 4}
 --- !u!1 &2094399039

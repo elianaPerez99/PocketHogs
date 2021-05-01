@@ -70,6 +70,7 @@ public class ServerScript : MonoBehaviour
         switch (recData)
         {
             case NetworkEventType.Nothing:
+                
                 SendHHData(channelId);
                 break;
             case NetworkEventType.ConnectEvent:
@@ -95,6 +96,9 @@ public class ServerScript : MonoBehaviour
                         foodIds++;
                         Send(msg, reliableChannel, clients);
                         break;
+                    case "BOIDOWN":
+                        hhSpawner.DeleteBoi(int.Parse(splitData[1]));
+                        break;
                     default:
                         Debug.Log("Invalid message: " + msg);
                         break;
@@ -118,7 +122,7 @@ public class ServerScript : MonoBehaviour
         ServerClient c = new ServerClient();
         c.connectionId = cnnID;
         c.playerName = "Player " + cnnID.ToString();
-        c.position = new Vector3(0, 0, 0);
+        c.position = new Vector3(10, 10, 0);
         clients.Add(c);
 
         string msg = "NAME|" + c.playerName + "|" + c.connectionId + "|";
@@ -193,7 +197,7 @@ public class ServerScript : MonoBehaviour
     private string OutputHHDataToString()
     {
         string msg = "HH|";
-        if (hhSpawner.GetList().Count > 0)
+        if (hhSpawner.GetList().Count >= 0)
         {
             foreach (hhData hh in hhSpawner.GetList())
             {
