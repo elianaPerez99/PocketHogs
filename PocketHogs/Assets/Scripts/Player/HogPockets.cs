@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using UnityEngine.UI;
 public class Hog
 {
     // Hedgehog info goes here
@@ -15,11 +15,29 @@ public class HogPockets : MonoBehaviour
 
     private string[] names = new string[]{"Froderick", "Jerry", "Alyssa", "Patty", "Cupcake", "Sonic", "Shadow", "Knuckles"};
 
+    private PocketUIScript pocketUI;
+
     private void Start()
     {
-        
+        pocketUI = GetComponentInChildren<Canvas>().GetComponentInChildren<PocketUIScript>();
     }
 
+    private void Update()
+    {
+        for (int i = 0; i < hogPockets.Length; i++)
+        {
+            if ((hogPockets[i] as Hog) != null)
+            {
+                pocketUI.pocketSpaces[i].GetComponentsInChildren<Image>()[1].color = new Color(1.0f, 1.0f, 1.0f, 1.0f);
+                pocketUI.pocketSpaces[i].GetComponentInChildren<Text>().text = hogPockets[i].name;
+            }
+            else 
+            {
+                pocketUI.pocketSpaces[i].GetComponentsInChildren<Image>()[1].color = new Color(1.0f, 1.0f, 1.0f, 0.0f);
+                pocketUI.pocketSpaces[i].GetComponentInChildren<Text>().text = "";
+            }
+        }
+    }
     // Look for a free pocket
     public int FindFreePocket()
     {
@@ -41,7 +59,7 @@ public class HogPockets : MonoBehaviour
     {
         // Add random hog information to pocket
         Hog hoggyBoi = new Hog();
-        int randNum = Random.Range(0, names.Length - 1);
+        int randNum = Random.Range(0, names.Length);
         hoggyBoi.name = names[randNum];
         hogPockets[pocket] = hoggyBoi;
 

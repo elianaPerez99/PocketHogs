@@ -1,7 +1,8 @@
 WindowsStandalone
 PlayerPath?
-D:/School/Spring 2021/PocketHogs Testing/client.exe
+C:/Users/Eliana School/Desktop/Testing/test.exe
 SceneListBegin?
+Assets/Scenes/Server.unity
 Assets/Scenes/ClientStartMenu.unity
 Assets/Scenes/Map1.unity
 SceneListEnd?
@@ -157,3 +158,4 @@ c2275a8bfbb9f9942cad75ecdfded41d UnityEngine.HoloLens.dll:UnityEngine.XR.WSA.Spa
 9de3a22eca9aefadba2d10d5987cefe3 UnityEngine.SpatialTracking.dll:UnityEngine.SpatialTracking.TrackedPoseDriver
 b996e1b0b6dfc6b976261c6feb43dc93 Assembly-CSharp.dll:.ServerHedgeHogs
 7e4169d7e63666cca3753fb247321bbf Assembly-CSharp.dll:.HedgeHog
+a00643a3874c5b90639fd875a1343f8d Assembly-CSharp.dll:.PocketUIScript
