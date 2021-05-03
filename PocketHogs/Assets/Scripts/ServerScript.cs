@@ -103,6 +103,9 @@ public class ServerScript : MonoBehaviour
                         SetTradePendingStatus(connectionId, splitData[1]);
                         CheckTwoReadyForTrade();
                         break;
+                    case "TRADEHOG|":
+                        Debug.Log("Recieved Hog: " + splitData[1]);
+                        break;
                     default:
                         Debug.Log("Invalid message: " + msg);
                         break;
@@ -252,14 +255,12 @@ public class ServerScript : MonoBehaviour
     private void SetTradePendingStatus(int id, string msg)
     {
         bool startTrade = int.Parse(msg) != 0;
-        Debug.Log(msg);
-        Debug.Log(startTrade);
         for (int i=0; i<clients.Count; i++)
         {
             if (id == clients[i].connectionId)
             {
                 clients[i].waitingToTrade = startTrade;
-                Debug.Log("Client " + clients[i].connectionId + "is ready to trade: " + clients[i].waitingToTrade.ToString());
+
             }
         }
     }

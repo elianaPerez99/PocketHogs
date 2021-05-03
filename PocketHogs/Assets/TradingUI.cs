@@ -13,10 +13,12 @@ public class TradingUI : MonoBehaviour {
 			if ((hp.GetHogs()[i] as Hog) != null)
 			{
 				buttons[i].GetComponentInChildren<Text>().text = hp.GetHogs()[i].name;
+				buttons[i].GetComponent<TradeHog>().index = i;
 			}
 			else
 			{
 				buttons[i].GetComponentInChildren<Text>().text = "";
+				buttons[i].GetComponent<TradeHog>().index = i;
 				buttons[i].interactable = false;
 			}
 		}

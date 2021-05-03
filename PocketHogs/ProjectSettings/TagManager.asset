@@ -8,6 +8,7 @@ TagManager:
   - Hog
   - SHog
   - TradingUI
+  - Client
   layers:
   - Default
   - TransparentFX

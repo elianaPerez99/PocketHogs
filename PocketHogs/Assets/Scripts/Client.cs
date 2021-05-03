@@ -25,8 +25,8 @@ public class Client : MonoBehaviour {
     private int reliableChannel;
     private int unreliableChannel;
 
-    private int myClientId;
-    private int connectionID;
+    public int myClientId = 0;
+    public int connectionID;
 
     private float connectionTime;
     private bool isConnected = false;
@@ -360,4 +360,9 @@ public class Client : MonoBehaviour {
         players[myClientId].avatar.GetComponent<PlayerMovement>().FoundTradePartner();
     }
 
+    public void TradeHog(string name)
+    {
+        string msg = "TRADEHOG|" + name;
+        Send(msg);
+    }
 }
