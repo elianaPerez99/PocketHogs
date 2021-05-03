@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Text;
 using UnityEngine.Networking;
+using UnityEngine.UI;
 
 public class ServerClient
 {
@@ -44,6 +45,9 @@ public class ServerScript : MonoBehaviour
     // Food for food spawning
     public GameObject foodPrefab;
 
+    //debuging stuff
+    public GameObject content;
+    public GameObject textPrefab;
     private void Start()
     {
         NetworkTransport.Init();
@@ -77,7 +81,7 @@ public class ServerScript : MonoBehaviour
             case NetworkEventType.Nothing:
                 break;
             case NetworkEventType.ConnectEvent:
-                Debug.Log("Player " + connectionId + " has connected");
+                ServerDebug("Player " + connectionId + " has connected");
                 OnConnection(connectionId);
                 break;
             case NetworkEventType.DataEvent:
@@ -97,9 +101,11 @@ public class ServerScript : MonoBehaviour
                         msg += '|' + fd.GetId().ToString();
                         foodIds++;
                         Send(msg, reliableChannel, clients);
+                        ServerDebug("Food was dropped by Player " + connectionId.ToString());
                         break;
                     case "BOIDOWN":
                         hhSpawner.DeleteBoi(int.Parse(splitData[1]));
+                        ServerDebug("Hedge hog captured");
                         break;
                     case "TRADEPEND":
                         SetTradePendingStatus(connectionId, splitData[1]);
@@ -107,15 +113,16 @@ public class ServerScript : MonoBehaviour
                         break;
                     case "TRADEHOG":
                         ReceivedHogs(splitData[1], connectionId);
+                        ServerDebug("Player " + connectionId.ToString() + " sent over " + splitData[1]);
                         break;
                     default:
-                        Debug.Log("Invalid message: " + msg);
+                        ServerDebug("Invalid message: " + msg);
                         break;
                 }
 
                 break;
             case NetworkEventType.DisconnectEvent:
-                Debug.Log("Player " + connectionId + " has disconnected");
+                ServerDebug("Player " + connectionId + " has disconnected");
                 OnDisconnect(connectionId);
                 break;
 
@@ -330,5 +337,11 @@ public class ServerScript : MonoBehaviour
     private void SendHogsBack(string name, int id)
     {
         Send("RECEIVEHOGS|" + name, reliableChannel, id);
+    }
+
+    private void ServerDebug(string message)
+    {
+        GameObject temp = GameObject.Instantiate(textPrefab, content.transform);
+        temp.GetComponent<Text>().text = message;
     }
 }
