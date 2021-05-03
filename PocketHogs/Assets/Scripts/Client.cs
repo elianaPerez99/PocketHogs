@@ -130,6 +130,9 @@ public class Client : MonoBehaviour {
                                 GetHedgeHogs(splitData[1], Time.deltaTime);
                             }
                             break;
+                        case "RECEIVEHOGS":
+                            GettingHog(splitData[1]);
+                            break;
                         default:
                             Debug.Log("Invalid message: " + msg);
                             break;
@@ -364,5 +367,10 @@ public class Client : MonoBehaviour {
     {
         string msg = "TRADEHOG|" + name;
         Send(msg);
+    }
+
+    private void GettingHog(string name)
+    {
+        players[myClientId].avatar.GetComponent<PlayerMovement>().ResetAfterTrading(name);
     }
 }

@@ -14,6 +14,7 @@ public class TradingUI : MonoBehaviour {
 			{
 				buttons[i].GetComponentInChildren<Text>().text = hp.GetHogs()[i].name;
 				buttons[i].GetComponent<TradeHog>().index = i;
+				buttons[i].interactable = true;
 			}
 			else
 			{

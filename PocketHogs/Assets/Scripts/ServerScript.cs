@@ -20,6 +20,7 @@ public class ServerScript : MonoBehaviour
     //networking stuff
     private List<ServerClient> clients = new List<ServerClient>();
     private List<FoodHealth> food;
+    private Dictionary<int, string> tradedHogs = new Dictionary<int, string>();
     private int foodIds = 0;
 
     private const int MAX_CONNECTION = 6;
@@ -56,6 +57,7 @@ public class ServerScript : MonoBehaviour
         hostID = NetworkTransport.AddHost(topop, port, null);
         webHostId = NetworkTransport.AddWebsocketHost(topop, port, null);
         food = new List<FoodHealth>();
+
         isStarted = true;
     }
 
@@ -103,8 +105,8 @@ public class ServerScript : MonoBehaviour
                         SetTradePendingStatus(connectionId, splitData[1]);
                         CheckTwoReadyForTrade();
                         break;
-                    case "TRADEHOG|":
-                        Debug.Log("Recieved Hog: " + splitData[1]);
+                    case "TRADEHOG":
+                        ReceivedHogs(splitData[1], connectionId);
                         break;
                     default:
                         Debug.Log("Invalid message: " + msg);
@@ -288,7 +290,45 @@ public class ServerScript : MonoBehaviour
             clients[indexsReady[1]].trading = true;
             clients[indexsReady[1]].waitingToTrade = false;
             clients[indexsReady[1]].tradingWith = clients[indexsReady[0]].connectionId;
-            Debug.Log("Trade Should Start");
         }
+    }
+
+    private void ReceivedHogs(string name, int id)
+    {
+        foreach (ServerClient sc in clients)
+        {
+            //finding who sent it
+            if (sc.connectionId == id)
+            {
+                tradedHogs.Add(id, name);
+                if (tradedHogs.ContainsKey(sc.tradingWith))
+                {
+                    SendHogsBack(name, sc.tradingWith);
+                    SendHogsBack(tradedHogs[sc.tradingWith], id);
+                    sc.trading = false;
+                    //finding who is receiving it
+                    foreach (ServerClient client in clients)
+                    {
+                        if (client.connectionId == sc.tradingWith)
+                        {
+                            client.trading = false;
+                            client.tradingWith = 0;
+                            break;
+                        }
+                    }
+                    //clearing dictionary
+                    tradedHogs.Remove(sc.connectionId);
+                    tradedHogs.Remove(sc.tradingWith);
+                    sc.tradingWith = 0;
+                }
+                break;
+            }
+        }
+
+    }
+
+    private void SendHogsBack(string name, int id)
+    {
+        Send("RECEIVEHOGS|" + name, reliableChannel, id);
     }
 }

@@ -22,6 +22,7 @@ public class PlayerMovement : MonoBehaviour
 	//ui
 	private Text tradingText;
 	private bool textOn = false;
+	private bool trading = false;
 	private Canvas tradingCanvas;
 
 	private void Start()
@@ -57,7 +58,7 @@ public class PlayerMovement : MonoBehaviour
 			DropFood();
 		}
 		//add input for trading
-		if (Input.GetKeyDown(KeyCode.T))
+		if (Input.GetKeyDown(KeyCode.T) && !trading)
 		{
 			if (textOn)
 			{
@@ -106,8 +107,19 @@ public class PlayerMovement : MonoBehaviour
 	public void FoundTradePartner()
 	{
 		tradingText.text = "Partner Found... Starting Trade...";
+		textOn = false;
 		tradingCanvas.GetComponent<CanvasGroup>().alpha = 1;
 		tradingCanvas.GetComponent<TradingUI>().SetPockets(GetComponent<HogPockets>());
 		GetComponent<HogPockets>().ToggleUI(0);
+		trading = true;
+	}
+
+	public void ResetAfterTrading(string name)
+	{
+		tradingText.text = "";
+		tradingCanvas.GetComponent<CanvasGroup>().alpha = 0;
+		GetComponent<HogPockets>().AddHog(name);
+		GetComponent<HogPockets>().ToggleUI(1);
+		trading = false;
 	}
 }
