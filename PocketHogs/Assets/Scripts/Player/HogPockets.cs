@@ -17,7 +17,7 @@ public class HogPockets : MonoBehaviour
 
     private PocketUIScript pocketUI;
 
-    private void Start()
+    public void SetPocketUI()
     {
         pocketUI = GetComponentInChildren<Canvas>().GetComponentInChildren<PocketUIScript>();
     }

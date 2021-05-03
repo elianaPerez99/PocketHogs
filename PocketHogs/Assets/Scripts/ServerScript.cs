@@ -9,6 +9,9 @@ public class ServerClient
     public int connectionId;
     public string playerName;
     public Vector2 position;
+    public bool waitingToTrade;
+    public bool trading;
+    public int tradingWith;
     //add more to this as we have more information
 }
 
@@ -70,8 +73,6 @@ public class ServerScript : MonoBehaviour
         switch (recData)
         {
             case NetworkEventType.Nothing:
-                
-                //SendHHData(channelId);
                 break;
             case NetworkEventType.ConnectEvent:
                 Debug.Log("Player " + connectionId + " has connected");
@@ -87,7 +88,6 @@ public class ServerScript : MonoBehaviour
                         OnSendPlayerPosition(connectionId, int.Parse(splitData[2]), int.Parse(splitData[3]));
                         Send(msg, reliableChannel, clients);
                         break;
-
                     case "FOODDROP":
                         FoodHealth fd = SpawnFood(int.Parse(splitData[1]), int.Parse(splitData[2]));
                         fd.SetId(foodIds);
@@ -98,6 +98,10 @@ public class ServerScript : MonoBehaviour
                         break;
                     case "BOIDOWN":
                         hhSpawner.DeleteBoi(int.Parse(splitData[1]));
+                        break;
+                    case "TRADEPEND":
+                        SetTradePendingStatus(connectionId, splitData[1]);
+                        CheckTwoReadyForTrade();
                         break;
                     default:
                         Debug.Log("Invalid message: " + msg);
@@ -114,8 +118,8 @@ public class ServerScript : MonoBehaviour
 
                 break;
         }
-
-        SendHHData(channelId);
+        if(clients.Count > 0 )
+            SendHHData(channelId);
     }
 
     private void OnConnection(int cnnID)
@@ -242,5 +246,48 @@ public class ServerScript : MonoBehaviour
     {
         string msg = "FOODGONE|" + id.ToString();
         Send(msg, reliableChannel, clients);
+    }
+
+    //get trade pending data
+    private void SetTradePendingStatus(int id, string msg)
+    {
+        bool startTrade = int.Parse(msg) != 0;
+        Debug.Log(msg);
+        Debug.Log(startTrade);
+        for (int i=0; i<clients.Count; i++)
+        {
+            if (id == clients[i].connectionId)
+            {
+                clients[i].waitingToTrade = startTrade;
+                Debug.Log("Client " + clients[i].connectionId + "is ready to trade: " + clients[i].waitingToTrade.ToString());
+            }
+        }
+    }
+
+    private void CheckTwoReadyForTrade()
+    {
+        //check if two are ready
+        List<int> indexsReady = new List<int>();
+        for(int i=0; i<clients.Count; i++)
+        {
+            if (clients[i].waitingToTrade)
+            {
+                indexsReady.Add(i);
+                
+            }
+        }
+        if (indexsReady.Count == 2)
+        {
+            //telling clients that they are trading AND setting it up so the server knows who is trading
+            Send("TRADESTART|", reliableChannel, clients[indexsReady[0]].connectionId);
+            clients[indexsReady[0]].trading = true;
+            clients[indexsReady[0]].waitingToTrade = false;
+            clients[indexsReady[0]].tradingWith = clients[indexsReady[1]].connectionId;
+            Send("TRADESTART|", reliableChannel, clients[indexsReady[1]].connectionId);
+            clients[indexsReady[1]].trading = true;
+            clients[indexsReady[1]].waitingToTrade = false;
+            clients[indexsReady[1]].tradingWith = clients[indexsReady[0]].connectionId;
+            Debug.Log("Trade Should Start");
+        }
     }
 }

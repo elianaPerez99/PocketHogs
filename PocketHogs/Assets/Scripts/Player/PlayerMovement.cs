@@ -1,8 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Networking;
-
+using UnityEngine.UI;
 public class PlayerMovement : MonoBehaviour
 {
 	// For player movement
@@ -20,6 +19,10 @@ public class PlayerMovement : MonoBehaviour
 	// For sending the food message
 	public GameObject client;
 
+	//ui
+	private Text tradingText;
+	private bool textOn = false;
+
 	private void Start()
 	{
 		rb = GetComponent<Rigidbody>();
@@ -27,10 +30,11 @@ public class PlayerMovement : MonoBehaviour
 		gameCamera = FindObjectOfType<Camera>();
 
 		lastPos = transform.position;
+		tradingText = GetComponentInChildren<Canvas>().GetComponentInChildren<Text>();
 	}
 
 	// Update is called once per frame
-	void Update ()
+	void Update()
 	{
 		GetInput();
 		CameraFollow();
@@ -46,9 +50,25 @@ public class PlayerMovement : MonoBehaviour
 		rb.velocity = new Vector3(xMove, yMove, 0);
 
 		// Add input for dropping food
-		if(Input.GetKeyDown(KeyCode.F))
+		if (Input.GetKeyDown(KeyCode.F))
 		{
 			DropFood();
+		}
+		//add input for trading
+		if (Input.GetKeyDown(KeyCode.T))
+		{
+			if (textOn)
+			{
+				tradingText.text = "";
+				textOn = false;
+				client.GetComponent<Client>().EndingTrade();
+			}
+			else
+			{
+				tradingText.text = "Looking for Trade...";
+				textOn = true;
+				client.GetComponent<Client>().StartingTrade();
+			}
 		}
 	}
 
@@ -79,5 +99,10 @@ public class PlayerMovement : MonoBehaviour
 	public void SetLastPos()
 	{
 		lastPos = transform.position;
+	}
+
+	public void FoundTradePartner()
+	{
+		tradingText.text = "Partner Found... Starting Trade...";
 	}
 }

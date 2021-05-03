@@ -36,6 +36,7 @@ public class Client : MonoBehaviour {
 
     // Players information
     public GameObject playerPrefab;
+    public GameObject canvasPrefab;
     public Dictionary<int,Player> players = new Dictionary<int,Player>();
 
     // Information for regularly keeping track of player movement updates
@@ -103,7 +104,9 @@ public class Client : MonoBehaviour {
                             Debug.Log("Client disconnect message");
                             PlayerDisconnected(int.Parse(splitData[1]));
                             break;
-
+                        case "TRADESTART":
+                            FoundTradePartner();
+                            break;
                         case "SENDPLYPOS":
                             OnSendPlayerPosition(splitData);
                             break;
@@ -253,6 +256,9 @@ public class Client : MonoBehaviour {
             go.GetComponent<Rigidbody>().isKinematic = false;
             go.AddComponent<PlayerMovement>();
             go.AddComponent<HogPockets>();
+            GameObject.Instantiate(canvasPrefab, go.GetComponent<HogPockets>().transform);
+            go.GetComponent<HogPockets>().SetPocketUI();
+
             isStarted = true;
 
             go.GetComponent<PlayerMovement>().client = this.gameObject;
@@ -334,6 +340,24 @@ public class Client : MonoBehaviour {
     public float DecompressPosFloat(int x)
     {
         return (float)x / compressionVal;
+    }
+
+    //trading functions
+    public void StartingTrade()
+    {
+        string msg = "TRADEPEND|1";
+        Send(msg);
+    }
+
+    public void EndingTrade()
+    {
+        string msg = "TRADEPEND|0";
+        Send(msg);
+    }
+
+    public void FoundTradePartner()
+    {
+        players[myClientId].avatar.GetComponent<PlayerMovement>().FoundTradePartner();
     }
 
 }
