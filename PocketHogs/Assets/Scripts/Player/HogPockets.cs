@@ -22,6 +22,11 @@ public class HogPockets : MonoBehaviour
         pocketUI = GetComponentInChildren<Canvas>().GetComponentInChildren<PocketUIScript>();
     }
 
+    public void ToggleUI(float alpha)
+    {
+        pocketUI.gameObject.GetComponent<CanvasGroup>().alpha = alpha;
+    }
+
     private void Update()
     {
         for (int i = 0; i < hogPockets.Length; i++)
@@ -65,5 +70,10 @@ public class HogPockets : MonoBehaviour
     public void RemoveHog(int pocket)
     {
         hogPockets[pocket] = null;
+    }
+
+    public Hog[] GetHogs()
+    {
+        return hogPockets;
     }
 }

@@ -160,3 +160,4 @@ a00643a3874c5b90639fd875a1343f8d Assembly-CSharp.dll:.PocketUIScript
 05524b8f659e7bfe5756d1335fec24ba Assembly-CSharp.dll:.HostButton
 b996e1b0b6dfc6b976261c6feb43dc93 Assembly-CSharp.dll:.ServerHedgeHogs
 7e4169d7e63666cca3753fb247321bbf Assembly-CSharp.dll:.HedgeHog
+05524b8f659e7bfe5756d1335fec24ba Assembly-CSharp.dll:.TradingUI

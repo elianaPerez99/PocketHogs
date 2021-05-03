@@ -22,6 +22,7 @@ public class PlayerMovement : MonoBehaviour
 	//ui
 	private Text tradingText;
 	private bool textOn = false;
+	private Canvas tradingCanvas;
 
 	private void Start()
 	{
@@ -31,6 +32,7 @@ public class PlayerMovement : MonoBehaviour
 
 		lastPos = transform.position;
 		tradingText = GetComponentInChildren<Canvas>().GetComponentInChildren<Text>();
+		tradingCanvas = GameObject.FindGameObjectsWithTag("TradingUI")[0].GetComponent<Canvas>();
 	}
 
 	// Update is called once per frame
@@ -104,5 +106,8 @@ public class PlayerMovement : MonoBehaviour
 	public void FoundTradePartner()
 	{
 		tradingText.text = "Partner Found... Starting Trade...";
+		tradingCanvas.GetComponent<CanvasGroup>().alpha = 1;
+		tradingCanvas.GetComponent<TradingUI>().SetPockets(GetComponent<HogPockets>());
+		GetComponent<HogPockets>().ToggleUI(0);
 	}
 }
