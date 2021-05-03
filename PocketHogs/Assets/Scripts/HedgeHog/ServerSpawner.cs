@@ -6,7 +6,6 @@ using UnityEngine;
 public struct hhData
 {
     public Vector3 position;
-    public Vector3 rotation;
     public Vector3 velocity;
     public int id;
 }
@@ -48,10 +47,10 @@ public class ServerSpawner:MonoBehaviour
                 var position = new Vector3(Random.Range(spawnMin.x, spawnMax.x), Random.Range(spawnMin.y, spawnMax.y), 0);
                 hhData temp = new hhData();
                 temp.position = position;
-                temp.rotation = new Vector3(0, 0, 0);
                 temp.velocity = new Vector3(0, 0, 0);
                 temp.id = nextID;
-                GameObject tempObj = Instantiate(hhprefab, temp.position, Quaternion.Euler(temp.rotation), transform);
+                GameObject tempObj = Instantiate(hhprefab, transform);
+                tempObj.transform.position = temp.position;
                 tempObj.GetComponent<ServerHedgeHogs>().data = temp;
                 hedgeHogCalculations.Add(tempObj);
 
@@ -67,10 +66,10 @@ public class ServerSpawner:MonoBehaviour
                 var position = new Vector3(Random.Range(spawnMin.x, spawnMax.x), Random.Range(spawnMin.y, spawnMax.y), 0);
                 hhData temp = new hhData();
                 temp.position = position;
-                temp.rotation = new Vector3(0, 0, 0);
                 temp.velocity = new Vector3(0, 0, 0);
                 temp.id = nextID;
-                GameObject tempObj = Instantiate(hhprefab, temp.position, Quaternion.Euler(temp.rotation), transform);
+                GameObject tempObj = Instantiate(hhprefab, transform);
+                tempObj.transform.position = temp.position;
                 tempObj.GetComponent<ServerHedgeHogs>().data = temp;
                 hedgeHogCalculations.Add(tempObj);
 

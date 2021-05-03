@@ -219,8 +219,7 @@ public class ServerScript : MonoBehaviour
             foreach (hhData hh in hhSpawner.GetList())
             {
                 msg += hh.id.ToString() + "~" + CompressPosFloat(hh.position.x).ToString() + '~' + CompressPosFloat(hh.position.y).ToString() + '~'
-                    + CompressPosFloat(hh.rotation.x).ToString() + '~' + CompressPosFloat(hh.rotation.y).ToString() + '~'+
-                    CompressPosFloat(hh.velocity.x).ToString() + '~' + CompressPosFloat(hh.velocity.y).ToString() + "`";
+                    + CompressPosFloat(hh.velocity.x).ToString() + '~' + CompressPosFloat(hh.velocity.y).ToString() + "`";
             }
             msg = msg.Trim('`');
         }
