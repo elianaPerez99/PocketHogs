@@ -1,6 +1,6 @@
 WindowsStandalone
 PlayerPath?
-C:/Users/Eliana School/Desktop/Testing/test.exe
+D:/School/Spring 2021/PocketHogs Testing/pockethogs.exe
 SceneListBegin?
 Assets/Scenes/ClientStartMenu.unity
 Assets/Scenes/Map1.unity

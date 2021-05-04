@@ -171,6 +171,7 @@ public class ServerScript : MonoBehaviour
             if (c.connectionId == cnnID)
             {
                 clients.Remove(c);
+                break;
             }
         }
 
